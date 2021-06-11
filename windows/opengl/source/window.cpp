@@ -7,17 +7,30 @@
 namespace LibGraphics
 {
 
+class Window::Impl
+{
+public:
+    HWND m_handle;
+};
+
 static LRESULT CALLBACK WindowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
 {
-    return DefWindowProc(hWnd, uMsg, wParam, lParam);
+    switch (uMsg)
+    {
+    case WM_CLOSE:
+        DestroyWindow(hWnd);
+        return 0;
+    default:
+        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+    }
 }
 
-Window::Window(String const& title)
+Window::Window(String const& title) : m_pImpl { new Impl() }
 {
     WNDCLASS windowClass { };
     
     const HMODULE moduleHandle { GetModuleHandle(NULL) };
-    if(moduleHandle == NULL)
+    if (moduleHandle == NULL)
     {
         throw std::system_error { 
             std::error_code { static_cast<int>(GetLastError()), std::system_category() }, 
@@ -28,14 +41,14 @@ Window::Window(String const& title)
     windowClass.lpfnWndProc = WindowProc;
 
     const ATOM atom = RegisterClass(&windowClass);
-    if(atom == 0)
+    if (atom == 0)
     {
         throw std::system_error { 
             std::error_code { static_cast<int>(GetLastError()), std::system_category() }, 
             "Failed to register window" };
     }
 
-    const HWND windowHandle { CreateWindowEx(
+    m_pImpl->m_handle = CreateWindowEx(
         0,
         windowClass.lpszClassName,
         static_cast<StandardStringImpl const*>(title.getString())->c_str(),
@@ -48,15 +61,20 @@ Window::Window(String const& title)
         NULL,
         moduleHandle,
         NULL
-    ) };
-    if(windowHandle == NULL)
+    );
+    if (m_pImpl->m_handle == NULL)
     {
         throw std::system_error { 
             std::error_code { static_cast<int>(GetLastError()), std::system_category() }, 
             "Failed to create window" };
     }
 
-    ShowWindow(windowHandle, SW_NORMAL);
+    ShowWindow(m_pImpl->m_handle, SW_NORMAL);
+}
+
+Window::~Window()
+{
+    
 }
 
 }
