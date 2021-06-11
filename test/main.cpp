@@ -10,7 +10,7 @@ int main()
 
     try
     {
-        LibGraphics::Window window { "zß水🍌" };
+        LibGraphics::Window window{"zß水🍌"};
     }
     catch(const std::system_error& e)
     {

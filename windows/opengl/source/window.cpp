@@ -25,15 +25,15 @@ static LRESULT CALLBACK WindowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM w
     }
 }
 
-Window::Window(String const& title) : m_pImpl { new Impl() }
+Window::Window(String const& title) : m_pImpl{new Impl()}
 {
-    WNDCLASS windowClass { };
+    WNDCLASS windowClass{};
     
-    const HMODULE moduleHandle { GetModuleHandle(NULL) };
+    const HMODULE moduleHandle{GetModuleHandle(NULL)};
     if (moduleHandle == NULL)
     {
         throw std::system_error { 
-            std::error_code { static_cast<int>(GetLastError()), std::system_category() }, 
+            std::error_code{static_cast<int>(GetLastError()), std::system_category()}, 
             "Failed to get module handle" };
     }
     windowClass.hInstance = moduleHandle;
@@ -44,7 +44,7 @@ Window::Window(String const& title) : m_pImpl { new Impl() }
     if (atom == 0)
     {
         throw std::system_error { 
-            std::error_code { static_cast<int>(GetLastError()), std::system_category() }, 
+            std::error_code{static_cast<int>(GetLastError()), std::system_category()}, 
             "Failed to register window" };
     }
 
@@ -65,7 +65,7 @@ Window::Window(String const& title) : m_pImpl { new Impl() }
     if (m_pImpl->m_handle == NULL)
     {
         throw std::system_error { 
-            std::error_code { static_cast<int>(GetLastError()), std::system_category() }, 
+            std::error_code{static_cast<int>(GetLastError()), std::system_category()}, 
             "Failed to create window" };
     }
 
@@ -74,7 +74,7 @@ Window::Window(String const& title) : m_pImpl { new Impl() }
 
 Window::~Window()
 {
-    
+
 }
 
 }

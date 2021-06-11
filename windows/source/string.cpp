@@ -12,17 +12,17 @@ using StandardStringImpl = StandardStringWindowsUnicode;
 using StandardStringImpl = StandardStringWindows;
 #endif
 
-String::String() : m_string { std::make_unique<StandardStringImpl>() }
+String::String() : m_string{new StandardStringImpl()}
 {
 
 }
 
-String::String(char const *str) : m_string { std::make_unique<StandardStringImpl>(str) }
+String::String(char const *str) : m_string{new StandardStringImpl(str)}
 {
 
 }
 
-String::String(wchar_t const *str) : m_string { std::make_unique<StandardStringImpl>(str) }
+String::String(wchar_t const *str) : m_string{new StandardStringImpl(str)}
 {
 
 }
