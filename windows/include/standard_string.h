@@ -18,8 +18,6 @@ private:
     std::string m_string;
 };
 
-char const *c_str(StandardStringAnsi const &string);
-
 class StandardStringUnicode
 {
 public:
@@ -36,11 +34,9 @@ private:
 #if defined(UNICODE)
 using StandardString = StandardStringUnicode;
 using Char = wchar_t;
-#define CSTR(str) str.c_wstr()
 #else
 using StandardString = StandardStringAnsi;
 using Char = char;
-#define CSTR(str) str.c_str()
 #endif // defined(UNICODE)
 
 }

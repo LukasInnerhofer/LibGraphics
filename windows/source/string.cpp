@@ -2,15 +2,15 @@
 
 #include "LibGraphics/string.h"
 #include "standard_string.h"
+#include "string_impl.h"
 
 namespace LibGraphics
 {
 
-class String::Impl
+Char const *String::Impl::c_str() const
 {
-public:
-    StandardString m_string;
-};
+    return m_string.c_str();
+}
 
 String::String() : m_pImpl{new Impl()}
 {
@@ -31,19 +31,5 @@ String::~String()
 {
     
 }
-
-#if !defined(UNICODE)
-char const *String::c_str() const
-{
-    return m_pImpl->m_string.c_str();
-}
-
-#else
-
-wchar_t const *String::c_wstr() const
-{
-    return m_pImpl->m_string.c_str();
-}
-#endif
 
 }
