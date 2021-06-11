@@ -3,27 +3,52 @@
 
 #include "standard_string_windows.h"
 #include "LibGraphics/window.h"
-
+#include <iostream>
 namespace LibGraphics
 {
 
 class Window::Impl
 {
 public:
-    HWND m_handle;
-};
-
-static LRESULT CALLBACK WindowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
-{
-    switch (uMsg)
+    // Non static member functions cannot be registered as message handlers
+    // because they take a "this" pointer.
+    // This function is used to handle all messages of all Window instances
+    // by routing them to each respective instance via the lParam parameter.
+    static LRESULT CALLBACK MessageRouter(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
-    case WM_CLOSE:
-        DestroyWindow(hWnd);
-        return 0;
-    default:
-        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        Impl* app;
+        if (msg == WM_CREATE)
+        {
+            // Get the implementation pointer from the lParam passed into CreateWindow(Ex)
+            app = (Impl*)(((LPCREATESTRUCT)lParam)->lpCreateParams);
+            SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)app);
+        }
+        else
+        {
+            app = (Impl*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+        }
+        return app->WindowProc(hWnd, msg, wParam, lParam);
     }
-}
+    
+
+    LRESULT CALLBACK WindowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam)
+    {
+        switch (uMsg)
+        {
+        case WM_CLOSE:
+            DestroyWindow(hWnd);
+            m_isOpen = false;
+            break;
+        default:
+            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        }
+
+        return 0;
+    }
+
+    HWND m_handle;
+    bool m_isOpen;
+};
 
 Window::Window(String const& title) : m_pImpl{new Impl()}
 {
@@ -37,8 +62,9 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
             "Failed to get module handle" };
     }
     windowClass.hInstance = moduleHandle;
-    windowClass.lpszClassName = static_cast<StandardStringImpl const*>(title.getString())->c_str();
-    windowClass.lpfnWndProc = WindowProc;
+    const auto className = static_cast<StandardStringImpl const*>(title.getString())->c_str();
+    windowClass.lpszClassName = className;
+    windowClass.lpfnWndProc = Impl::MessageRouter;
 
     const ATOM atom = RegisterClass(&windowClass);
     if (atom == 0)
@@ -51,7 +77,7 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
     m_pImpl->m_handle = CreateWindowEx(
         0,
         windowClass.lpszClassName,
-        static_cast<StandardStringImpl const*>(title.getString())->c_str(),
+        className,
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,
         CW_USEDEFAULT,
@@ -60,7 +86,7 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
         NULL,
         NULL,
         moduleHandle,
-        NULL
+        m_pImpl.get()
     );
     if (m_pImpl->m_handle == NULL)
     {
@@ -70,11 +96,27 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
     }
 
     ShowWindow(m_pImpl->m_handle, SW_NORMAL);
+    m_pImpl->m_isOpen = true;
 }
 
 Window::~Window()
 {
 
+}
+
+void Window::pollEvents()
+{
+    MSG msg;
+    if(PeekMessage(&msg, m_pImpl->m_handle, NULL, NULL, PM_REMOVE))
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+}
+
+bool Window::isOpen()
+{
+    return m_pImpl->m_isOpen;
 }
 
 }

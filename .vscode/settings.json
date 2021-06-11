@@ -40,6 +40,9 @@
         "xutility": "cpp",
         "cctype": "cpp",
         "string": "cpp",
-        "clocale": "cpp"
+        "clocale": "cpp",
+        "chrono": "cpp",
+        "ratio": "cpp",
+        "thread": "cpp"
     }
 }

@@ -11,13 +11,16 @@ int main()
     try
     {
         LibGraphics::Window window{"zß水🍌"};
+
+        while(window.isOpen())
+        {
+            window.pollEvents();
+        }
     }
     catch(const std::system_error& e)
     {
         std::cerr << e.what() << '\n';
     }
-
-    for(;;);
     
     return 0;
 }
