@@ -1,8 +1,8 @@
-#include <memory>
 #include <system_error>
 #include <Windows.h>
 
-#include "window.h"
+#include "standard_string_windows.h"
+#include "LibGraphics/window.h"
 
 namespace LibGraphics
 {
@@ -12,7 +12,7 @@ static LRESULT CALLBACK WindowProc(_In_ HWND hWnd, _In_ UINT uMsg, _In_ WPARAM w
     return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-Window::Window(std::string const& title)
+Window::Window(String const& title)
 {
     WNDCLASS windowClass { };
     
@@ -24,7 +24,7 @@ Window::Window(std::string const& title)
             "Failed to get module handle" };
     }
     windowClass.hInstance = moduleHandle;
-    windowClass.lpszClassName = title.c_str();
+    windowClass.lpszClassName = static_cast<StandardStringImpl const*>(title.getString())->c_str();
     windowClass.lpfnWndProc = WindowProc;
 
     const ATOM atom = RegisterClass(&windowClass);
@@ -38,7 +38,7 @@ Window::Window(std::string const& title)
     const HWND windowHandle { CreateWindowEx(
         0,
         windowClass.lpszClassName,
-        title.c_str(),
+        static_cast<StandardStringImpl const*>(title.getString())->c_str(),
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT,
         CW_USEDEFAULT,

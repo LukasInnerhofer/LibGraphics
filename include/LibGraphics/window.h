@@ -1,12 +1,14 @@
 #pragma once
 
+#include "LibGraphics/string.h"
+
 namespace LibGraphics
 {
 
 class Window
 {
 public:
-    Window(std::string const& title);
+    Window(String const& title);
 };
 
 }
