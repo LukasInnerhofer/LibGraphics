@@ -8,18 +8,20 @@ int main()
 {
     std::setlocale(LC_ALL, "en_US.utf8");
 
+    std::unique_ptr<LibGraphics::Window> window;
+
     try
     {
-        LibGraphics::Window window{"zß水🍌"};
-
-        while(window.isOpen())
-        {
-            window.pollEvents();
-        }
+        window = std::make_unique<LibGraphics::Window>("zß水🍌");
     }
     catch(const std::system_error& e)
     {
         std::cerr << e.what() << '\n';
+    }
+
+    while(window->isOpen())
+    {
+        window->pollEvents();
     }
     
     return 0;
