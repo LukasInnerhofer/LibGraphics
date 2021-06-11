@@ -2,8 +2,6 @@
 
 #include <memory>
 
-#include "LibGraphics/standard_string.h"
-
 namespace LibGraphics
 {
 
@@ -13,11 +11,15 @@ public:
     String();
     String(char const *str);
     String(wchar_t const *str);
+    ~String();
 
-    StandardString const *getString() const;
+    char const *c_str() const;
+    wchar_t const *c_wstr() const;
 
-private:
-    std::unique_ptr<StandardString> m_string;
+protected:
+    class Impl;
+    friend class Impl;
+    std::unique_ptr<Impl> m_pImpl;
 };
 
 }

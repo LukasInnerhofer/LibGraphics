@@ -11,11 +11,10 @@ endif()
 add_library(
     ${PROJECT_NAME} 
     include/${PROJECT_NAME}/window.h 
-    include/${PROJECT_NAME}/standard_string.h
     include/${PROJECT_NAME}/string.h
-    ${PLATFORM}/include/standard_string_${PLATFORM}.h
+    ${PLATFORM}/include/standard_string.h
     ${PLATFORM}/opengl/source/window.cpp
-    ${PLATFORM}/source/standard_string_${PLATFORM}.cpp
+    ${PLATFORM}/source/standard_string.cpp
     ${PLATFORM}/source/string.cpp)
 
 if(WIN32)

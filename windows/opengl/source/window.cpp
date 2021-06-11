@@ -1,9 +1,9 @@
 #include <system_error>
 #include <Windows.h>
 
-#include "standard_string_windows.h"
+#include "standard_string.h"
 #include "LibGraphics/window.h"
-#include <iostream>
+
 namespace LibGraphics
 {
 
@@ -62,7 +62,7 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
             "Failed to get module handle" };
     }
     windowClass.hInstance = moduleHandle;
-    const auto className = static_cast<StandardStringImpl const*>(title.getString())->c_str();
+    const auto className = CSTR(title);
     windowClass.lpszClassName = className;
     windowClass.lpfnWndProc = Impl::MessageRouter;
 
