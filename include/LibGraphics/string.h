@@ -1,6 +1,6 @@
 #pragma once
 
-#include <memory>
+#include <string>
 
 namespace LibGraphics
 {
@@ -15,10 +15,10 @@ public:
     String(wchar_t const *str);
     ~String();
 
+    std::wstring toWideString() const;
+
 private:
-    friend class Window;
-    class Impl;
-    std::unique_ptr<Impl> m_pImpl;
+    std::string m_string;
 };
 
 }

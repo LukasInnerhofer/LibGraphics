@@ -2,9 +2,8 @@
 #include <Windows.h>
 #include <GL/GL.h>
 
-#include "standard_string.h"
-#include "string_impl.h"
 #include "LibGraphics/window.h"
+#include "LibGraphics/string.h"
 
 namespace LibGraphics
 {
@@ -30,11 +29,11 @@ public:
         {
             // Get the implementation pointer from the lParam passed into CreateWindow(Ex)
             app = (Impl*)(((LPCREATESTRUCT)lParam)->lpCreateParams);
-            SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)app);
+            SetWindowLongPtrW(hWnd, GWLP_USERDATA, (LONG_PTR)app);
         }
         else
         {
-            app = (Impl*)GetWindowLongPtr(hWnd, GWLP_USERDATA);
+            app = (Impl*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
         }
         return app->windowProc(hWnd, msg, wParam, lParam);
     }
@@ -106,7 +105,7 @@ public:
             break;
 
         default:
-            return DefWindowProc(hWnd, uMsg, wParam, lParam);
+            return DefWindowProcW(hWnd, uMsg, wParam, lParam);
         }
 
         return 0;
@@ -118,15 +117,15 @@ public:
 
 Window::Window(String const& title) : m_pImpl{new Impl()}
 {
-    const HMODULE moduleHandle{GetModuleHandle(NULL)};
+    const HMODULE moduleHandle{GetModuleHandleW(NULL)};
     if (moduleHandle == NULL) 
     {
         throwSystemError("Failed to get module handle");
     }
     
-    const auto className = title.m_pImpl->c_str();
+    wchar_t const *className = title.toWideString().c_str();
 
-    const WNDCLASS windowClass 
+    const WNDCLASSW windowClass 
     {  
         CS_OWNDC, // style
         Impl::messageRouter, // wndProc
@@ -140,13 +139,13 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
         className
     };
 
-    const ATOM atom = RegisterClass(&windowClass);
+    const ATOM atom = RegisterClassW(&windowClass);
     if (atom == 0) 
     {
         throwSystemError("Failed to register window class");
     }
 
-    m_pImpl->m_handle = CreateWindowEx(
+    m_pImpl->m_handle = CreateWindowExW(
         0, // extended style
         windowClass.lpszClassName, // class name
         className, // window name
@@ -177,10 +176,10 @@ Window::~Window()
 void Window::pollEvents()
 {
     MSG msg;
-    if(PeekMessage(&msg, m_pImpl->m_handle, NULL, NULL, PM_REMOVE))
+    if(PeekMessageW(&msg, m_pImpl->m_handle, NULL, NULL, PM_REMOVE))
     {
         TranslateMessage(&msg);
-        DispatchMessage(&msg);
+        DispatchMessageW(&msg);
     }
 }
 

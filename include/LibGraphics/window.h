@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "LibGraphics/string.h"
 
 namespace LibGraphics
