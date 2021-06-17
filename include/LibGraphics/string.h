@@ -11,14 +11,16 @@ class String
 {
 public:
     String();
-    String(char const *str);
-    String(wchar_t const *str);
+    String(char const *string);
+    String(char8_t const *string);
+    String(std::string const &string);
+    String(std::u8string const &string);
     ~String();
 
     std::wstring toWideString() const;
 
 private:
-    std::string m_string;
+    std::u8string m_string;
 };
 
 }

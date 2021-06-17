@@ -1,5 +1,6 @@
 #include <clocale>
 #include <iostream>
+#include <iomanip>
 #include <system_error>
 
 #include "LibGraphics/window.h"

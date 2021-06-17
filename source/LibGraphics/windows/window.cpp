@@ -123,7 +123,7 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
         throwSystemError("Failed to get module handle");
     }
     
-    wchar_t const *className = title.toWideString().c_str();
+    const std::wstring className = title.toWideString();
 
     const WNDCLASSW windowClass 
     {  
@@ -136,7 +136,7 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
         NULL, // cursor
         NULL, // background brush
         NULL, // menu name
-        className
+        className.c_str()
     };
 
     const ATOM atom = RegisterClassW(&windowClass);
@@ -148,7 +148,7 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
     m_pImpl->m_handle = CreateWindowExW(
         0, // extended style
         windowClass.lpszClassName, // class name
-        className, // window name
+        className.c_str(), // window name
         WS_OVERLAPPEDWINDOW, // style
         CW_USEDEFAULT, // x
         CW_USEDEFAULT, // y

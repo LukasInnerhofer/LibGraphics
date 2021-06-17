@@ -1,6 +1,9 @@
 #pragma once
 
+#include <cuchar>
 #include <memory>
+#include <iomanip>
+#include <iostream>
 
 #include "LibGraphics/string.h"
 
@@ -12,17 +15,24 @@ String::String() : m_string{}
 
 }
 
-String::String(char const *str) : m_string{str}
+String::String(char const *string) : m_string{reinterpret_cast<char8_t const *>(string)}
 {
 
 }
 
-String::String(wchar_t const *str)
+String::String(char8_t const *string) : m_string{string}
 {
-    const size_t len = std::wcstombs(nullptr, str, 0) + 1;
-    std::unique_ptr<char[]> dst{new char[len]};
-    std::wcstombs(dst.get(), str, len);
-    m_string = dst.get();
+
+}
+
+String::String(std::string const &string) : String(string.c_str())
+{
+
+}
+
+String::String(std::u8string const &string) : m_string{string}
+{
+
 }
 
 String::~String()
@@ -32,10 +42,16 @@ String::~String()
 
 std::wstring String::toWideString() const
 {
-    const size_t len = std::mbstowcs(nullptr, m_string.c_str(), 0) + 1;
-    std::unique_ptr<wchar_t[]> dst{new wchar_t[len]};
-    std::mbstowcs(dst.get(), m_string.c_str(), len);
-    return dst.get();
+    const size_t length{std::mbstowcs(
+        nullptr, 
+        reinterpret_cast<char const *>(m_string.c_str()), 
+        0) + 1};
+    std::unique_ptr<wchar_t[]> destination{new wchar_t[length]};
+    std::mbstowcs(
+        destination.get(), 
+        reinterpret_cast<char const *>(m_string.c_str()), 
+        length);
+    return destination.get();
 }
 
 }
