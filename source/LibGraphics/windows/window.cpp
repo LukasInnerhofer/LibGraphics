@@ -43,62 +43,6 @@ public:
     {
         switch (uMsg)
         {
-        case WM_CREATE:
-        {
-            const PIXELFORMATDESCRIPTOR pixelFormat 
-            {
-                sizeof(PIXELFORMATDESCRIPTOR),
-                1, // version
-                PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER, // flags
-                32, // color depth in bits of the frame buffer
-                0, 0, 0, 0, 0, 0, 0, 0, // rgba bitplanes
-                0, // total number of bitplanes in the acc buffer
-                0, 0, 0, 0, // number of rgba bitplanes in the acc buffer 
-                24, // number of bits for the depth buffer
-                8, // number of bits for the stencil buffer
-                0, // number of aux buffers in the frame buffer
-                PFD_MAIN_PLANE, // ignored
-                0, // number of overlay and underlay planes
-                0, // ignored 
-                0, // visible mask
-                0 // ignored
-            };
-            
-            const HDC deviceContext = GetDC(m_handle);
-            if (deviceContext == NULL) 
-            {
-                throwSystemError("Failed to get device context");
-            }
-
-            const int pixelFormatIndex = ChoosePixelFormat(deviceContext, &pixelFormat);
-            if (pixelFormatIndex == 0) 
-            {
-                throwSystemError("Failed to choose pixel format");
-            }
-
-            if (SetPixelFormat(deviceContext, pixelFormatIndex, &pixelFormat) == FALSE)
-            {
-                throwSystemError("Failed to set pixel format");
-            }
-
-            const HGLRC glContext = wglCreateContext(deviceContext);
-            if (glContext == NULL)
-            {
-                throwSystemError("Failed to create OpenGL context");
-            }
-
-            if (wglMakeCurrent(deviceContext, glContext) == FALSE)
-            {
-                throwSystemError("Failed to make OpenGL context current");
-            }
-
-            glClearColor(1.f, 0.f, 0.f, 0.f);
-            glClear(GL_COLOR_BUFFER_BIT);
-            SwapBuffers(deviceContext);
-
-            break;
-        }
-
         case WM_CLOSE:
             DestroyWindow(hWnd);
             m_isOpen = false;
@@ -163,6 +107,58 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
     {
         throwSystemError("Failed to create window");
     }
+
+    const PIXELFORMATDESCRIPTOR pixelFormat 
+    {
+        sizeof(PIXELFORMATDESCRIPTOR),
+        1, // version
+        PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER, // flags
+        32, // color depth in bits of the frame buffer
+        0, 0, 0, 0, 0, 0, 0, 0, // rgba bitplanes
+        0, // total number of bitplanes in the acc buffer
+        0, 0, 0, 0, // number of rgba bitplanes in the acc buffer 
+        24, // number of bits for the depth buffer
+        8, // number of bits for the stencil buffer
+        0, // number of aux buffers in the frame buffer
+        PFD_MAIN_PLANE, // ignored
+        0, // number of overlay and underlay planes
+        0, // ignored 
+        0, // visible mask
+        0 // ignored
+    };
+    
+    const HDC deviceContext = GetDC(m_pImpl->m_handle);
+    if (deviceContext == NULL) 
+    {
+        throwSystemError("Failed to get device context");
+    }
+
+    const int pixelFormatIndex = ChoosePixelFormat(deviceContext, &pixelFormat);
+    if (pixelFormatIndex == 0) 
+    {
+        throwSystemError("Failed to choose pixel format");
+    }
+
+    if (SetPixelFormat(deviceContext, pixelFormatIndex, &pixelFormat) == FALSE)
+    {
+        throwSystemError("Failed to set pixel format");
+    }
+
+    const HGLRC glContext = wglCreateContext(deviceContext);
+    if (glContext == NULL)
+    {
+        throwSystemError("Failed to create OpenGL context");
+    }
+
+    if (wglMakeCurrent(deviceContext, glContext) == FALSE)
+    {
+        throwSystemError("Failed to make OpenGL context current");
+    }
+
+    glClearColor(1.f, 0.f, 0.f, 0.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    SwapBuffers(deviceContext);
+
 
     ShowWindow(m_pImpl->m_handle, SW_NORMAL);
     m_pImpl->m_isOpen = true;
