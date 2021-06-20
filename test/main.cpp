@@ -1,7 +1,9 @@
+#include <chrono>
 #include <clocale>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 #include <system_error>
+#include <thread>
 
 #include "lib_graphics/window.h"
 
@@ -21,11 +23,14 @@ int main()
         return 1;
     }
 
+    std::thread timerThread;
     while(window->isOpen())
     {
+        timerThread = std::thread{[]() { std::this_thread::sleep_for(std::chrono::milliseconds(16)); }};
         window->pollEvents();
         window->clear();
         window->display();
+        timerThread.join();
     }
     
     return 0;
