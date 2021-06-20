@@ -13,8 +13,10 @@ public:
     Window(String const &title);
     ~Window();
 
-    void pollEvents();
     bool isOpen();
+    void pollEvents();
+    void clear();
+    void display();
 
 private:
     class Impl;

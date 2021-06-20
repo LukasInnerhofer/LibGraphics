@@ -24,6 +24,8 @@ int main()
     while(window->isOpen())
     {
         window->pollEvents();
+        window->clear();
+        window->display();
     }
     
     return 0;

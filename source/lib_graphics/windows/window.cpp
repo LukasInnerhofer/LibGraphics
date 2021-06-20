@@ -158,10 +158,6 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
 
     ReleaseDC(m_pImpl->m_handle, m_pImpl->m_deviceContext);
 
-    glClearColor(1.f, 0.f, 0.f, 0.f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    SwapBuffers(m_pImpl->m_deviceContext);
-
     ShowWindow(m_pImpl->m_handle, SW_NORMAL);
     m_pImpl->m_isOpen = true;
 }
@@ -169,6 +165,11 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
 Window::~Window()
 {
 
+}
+
+bool Window::isOpen()
+{
+    return m_pImpl->m_isOpen;
 }
 
 void Window::pollEvents()
@@ -181,9 +182,15 @@ void Window::pollEvents()
     }
 }
 
-bool Window::isOpen()
+void Window::clear()
 {
-    return m_pImpl->m_isOpen;
+    glClearColor(1.f, 0.f, 0.f, 0.f);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void Window::display()
+{
+    SwapBuffers(m_pImpl->m_deviceContext);
 }
 
 }
