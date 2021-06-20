@@ -12,7 +12,7 @@ int main()
     std::unique_ptr<LibGraphics::Window> window;
     try
     {
-        window = std::make_unique<LibGraphics::Window>("zß水🍌");
+        window = std::make_unique<LibGraphics::Window>(u8"z\u00DF\u6C34\U0001F34C");
     }
     catch(const std::system_error& e)
     {
