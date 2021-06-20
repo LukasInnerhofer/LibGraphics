@@ -156,8 +156,6 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
         throwSystemError("Failed to make OpenGL context current");
     }
 
-    ReleaseDC(m_pImpl->handle, m_pImpl->deviceContext);
-
     ShowWindow(m_pImpl->handle, SW_NORMAL);
     m_pImpl->isOpen = true;
 }
