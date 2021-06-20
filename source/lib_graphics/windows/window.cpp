@@ -56,6 +56,7 @@ public:
     }
 
     HWND m_handle;
+    HDC m_deviceContext;
     bool m_isOpen;
 };
 
@@ -127,38 +128,39 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
         0 // ignored
     };
     
-    const HDC deviceContext = GetDC(m_pImpl->m_handle);
-    if (deviceContext == NULL) 
+    m_pImpl->m_deviceContext = GetDC(m_pImpl->m_handle);
+    if (m_pImpl->m_deviceContext == NULL) 
     {
         throwSystemError("Failed to get device context");
     }
 
-    const int pixelFormatIndex = ChoosePixelFormat(deviceContext, &pixelFormat);
+    const int pixelFormatIndex = ChoosePixelFormat(m_pImpl->m_deviceContext, &pixelFormat);
     if (pixelFormatIndex == 0) 
     {
         throwSystemError("Failed to choose pixel format");
     }
 
-    if (SetPixelFormat(deviceContext, pixelFormatIndex, &pixelFormat) == FALSE)
+    if (SetPixelFormat(m_pImpl->m_deviceContext, pixelFormatIndex, &pixelFormat) == FALSE)
     {
         throwSystemError("Failed to set pixel format");
     }
 
-    const HGLRC glContext = wglCreateContext(deviceContext);
+    const HGLRC glContext = wglCreateContext(m_pImpl->m_deviceContext);
     if (glContext == NULL)
     {
         throwSystemError("Failed to create OpenGL context");
     }
 
-    if (wglMakeCurrent(deviceContext, glContext) == FALSE)
+    if (wglMakeCurrent(m_pImpl->m_deviceContext, glContext) == FALSE)
     {
         throwSystemError("Failed to make OpenGL context current");
     }
 
+    ReleaseDC(m_pImpl->m_handle, m_pImpl->m_deviceContext);
+
     glClearColor(1.f, 0.f, 0.f, 0.f);
     glClear(GL_COLOR_BUFFER_BIT);
-    SwapBuffers(deviceContext);
-
+    SwapBuffers(m_pImpl->m_deviceContext);
 
     ShowWindow(m_pImpl->m_handle, SW_NORMAL);
     m_pImpl->m_isOpen = true;
