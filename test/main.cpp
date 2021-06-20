@@ -24,11 +24,25 @@ int main()
     }
 
     std::thread timerThread;
+    LibGraphics::Color color{0, 0, 0};
+    bool colorCountUp = true;
     while(window->isOpen())
     {
         timerThread = std::thread{[]() { std::this_thread::sleep_for(std::chrono::milliseconds(16)); }};
         window->pollEvents();
-        window->clear(LibGraphics::Color::cornflowerBlue);
+        window->clear(color);
+
+        if(color.getG() == LibGraphics::Color::max)
+        {
+            colorCountUp = false;
+        }
+        if(color.getG() == 0)
+        {
+            colorCountUp = true;
+        }
+
+        color.setG(color.getG() + colorCountUp - !colorCountUp);
+        
         window->display();
         timerThread.join();
     }
