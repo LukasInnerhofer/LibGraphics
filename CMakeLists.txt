@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.4)
 
 set(CMAKE_CXX_STANDARD 20)
 
-project(LibGraphics)
+project(lib_graphics)
 
 if(WIN32)
     set(PLATFORM windows)

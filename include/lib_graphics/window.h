@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "LibGraphics/string.h"
+#include "lib_graphics/string.h"
 
 namespace LibGraphics
 {

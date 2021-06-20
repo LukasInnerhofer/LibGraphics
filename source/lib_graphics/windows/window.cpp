@@ -1,9 +1,9 @@
 #include <system_error>
 #include <Windows.h>
-#include <GL/GL.h>
+#include <gl/GL.h>
 
-#include "LibGraphics/window.h"
-#include "LibGraphics/string.h"
+#include "lib_graphics/window.h"
+#include "lib_graphics/string.h"
 
 namespace LibGraphics
 {

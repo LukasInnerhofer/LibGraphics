@@ -5,7 +5,7 @@
 #include <iomanip>
 #include <iostream>
 
-#include "LibGraphics/string.h"
+#include "lib_graphics/string.h"
 
 namespace LibGraphics
 {
@@ -25,12 +25,46 @@ String::String(char8_t const *string) : m_string{string}
 
 }
 
+String::String(char16_t const *string) : m_string{}
+{
+    mbstate_t mbstate{};
+    char multibyteBuffer[MB_LEN_MAX];
+    while(*string != 0)
+    {
+        const size_t length = c16rtomb(multibyteBuffer, *string, &mbstate);
+        m_string.append(reinterpret_cast<char8_t const *>(multibyteBuffer), length);
+        ++string;
+    }
+}
+
+String::String(char32_t const *string) : m_string{}
+{
+    mbstate_t mbstate{};
+    char multibyteBuffer[MB_LEN_MAX];
+    while(*string != 0)
+    {
+        const size_t length = c32rtomb(multibyteBuffer, *string, &mbstate);
+        m_string.append(reinterpret_cast<char8_t const *>(multibyteBuffer), length);
+        ++string;
+    }
+}
+
 String::String(std::string const &string) : String(string.c_str())
 {
 
 }
 
 String::String(std::u8string const &string) : m_string{string}
+{
+
+}
+
+String::String(std::u16string const &string) : String(string.c_str())
+{
+
+}
+
+String::String(std::u32string const &string) : String(string.c_str())
 {
 
 }
