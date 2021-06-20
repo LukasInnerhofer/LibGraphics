@@ -24,7 +24,7 @@ int main()
     }
 
     std::thread timerThread;
-    LibGraphics::Color color{0, 0, 0};
+    LibGraphics::Color color{LibGraphics::Color::cornflowerBlue};
     bool colorCountUp = true;
     while(window->isOpen())
     {
