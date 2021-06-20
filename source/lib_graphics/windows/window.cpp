@@ -45,7 +45,7 @@ public:
         {
         case WM_CLOSE:
             DestroyWindow(hWnd);
-            m_isOpen = false;
+            isOpen = false;
             break;
 
         default:
@@ -55,9 +55,9 @@ public:
         return 0;
     }
 
-    HWND m_handle;
-    HDC m_deviceContext;
-    bool m_isOpen;
+    HWND handle;
+    HDC deviceContext;
+    bool isOpen;
 };
 
 Window::Window(String const& title) : m_pImpl{new Impl()}
@@ -90,7 +90,7 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
         throwSystemError("Failed to register window class");
     }
 
-    m_pImpl->m_handle = CreateWindowExW(
+    m_pImpl->handle = CreateWindowExW(
         0, // extended style
         windowClass.lpszClassName, // class name
         className.c_str(), // window name
@@ -104,7 +104,7 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
         moduleHandle, // associated module handle
         m_pImpl.get() // passed to messageRouter via lParam
     );
-    if (m_pImpl->m_handle == NULL) 
+    if (m_pImpl->handle == NULL) 
     {
         throwSystemError("Failed to create window");
     }
@@ -128,38 +128,38 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
         0 // ignored
     };
     
-    m_pImpl->m_deviceContext = GetDC(m_pImpl->m_handle);
-    if (m_pImpl->m_deviceContext == NULL) 
+    m_pImpl->deviceContext = GetDC(m_pImpl->handle);
+    if (m_pImpl->deviceContext == NULL) 
     {
         throwSystemError("Failed to get device context");
     }
 
-    const int pixelFormatIndex = ChoosePixelFormat(m_pImpl->m_deviceContext, &pixelFormat);
+    const int pixelFormatIndex = ChoosePixelFormat(m_pImpl->deviceContext, &pixelFormat);
     if (pixelFormatIndex == 0) 
     {
         throwSystemError("Failed to choose pixel format");
     }
 
-    if (SetPixelFormat(m_pImpl->m_deviceContext, pixelFormatIndex, &pixelFormat) == FALSE)
+    if (SetPixelFormat(m_pImpl->deviceContext, pixelFormatIndex, &pixelFormat) == FALSE)
     {
         throwSystemError("Failed to set pixel format");
     }
 
-    const HGLRC glContext = wglCreateContext(m_pImpl->m_deviceContext);
+    const HGLRC glContext = wglCreateContext(m_pImpl->deviceContext);
     if (glContext == NULL)
     {
         throwSystemError("Failed to create OpenGL context");
     }
 
-    if (wglMakeCurrent(m_pImpl->m_deviceContext, glContext) == FALSE)
+    if (wglMakeCurrent(m_pImpl->deviceContext, glContext) == FALSE)
     {
         throwSystemError("Failed to make OpenGL context current");
     }
 
-    ReleaseDC(m_pImpl->m_handle, m_pImpl->m_deviceContext);
+    ReleaseDC(m_pImpl->handle, m_pImpl->deviceContext);
 
-    ShowWindow(m_pImpl->m_handle, SW_NORMAL);
-    m_pImpl->m_isOpen = true;
+    ShowWindow(m_pImpl->handle, SW_NORMAL);
+    m_pImpl->isOpen = true;
 }
 
 Window::~Window()
@@ -169,28 +169,29 @@ Window::~Window()
 
 bool Window::isOpen()
 {
-    return m_pImpl->m_isOpen;
+    return m_pImpl->isOpen;
 }
 
 void Window::pollEvents()
 {
     MSG msg;
-    if(PeekMessageW(&msg, m_pImpl->m_handle, NULL, NULL, PM_REMOVE))
+    if(PeekMessageW(&msg, m_pImpl->handle, NULL, NULL, PM_REMOVE))
     {
         TranslateMessage(&msg);
         DispatchMessageW(&msg);
     }
 }
 
-void Window::clear()
+void Window::clear(Color const &color)
 {
-    glClearColor(1.f, 0.f, 0.f, 0.f);
+    const Color::Float floatColor = color.toFloat();
+    glClearColor(floatColor.r, floatColor.g, floatColor.b, floatColor.a);
     glClear(GL_COLOR_BUFFER_BIT);
 }
 
 void Window::display()
 {
-    SwapBuffers(m_pImpl->m_deviceContext);
+    SwapBuffers(m_pImpl->deviceContext);
 }
 
 }

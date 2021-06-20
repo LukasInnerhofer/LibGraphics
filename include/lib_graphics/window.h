@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "lib_graphics/color.h"
 #include "lib_graphics/string.h"
 
 namespace LibGraphics
@@ -15,7 +16,7 @@ public:
 
     bool isOpen();
     void pollEvents();
-    void clear();
+    void clear(Color const &color);
     void display();
 
 private:

@@ -13,6 +13,7 @@ add_library(
     include/${PROJECT_NAME}/window.h 
     include/${PROJECT_NAME}/string.h
     source/${PROJECT_NAME}/string.cpp
+    source/${PROJECT_NAME}/color.cpp
     source/${PROJECT_NAME}/${PLATFORM}/window.cpp)
 
 if(WIN32)

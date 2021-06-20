@@ -28,7 +28,7 @@ int main()
     {
         timerThread = std::thread{[]() { std::this_thread::sleep_for(std::chrono::milliseconds(16)); }};
         window->pollEvents();
-        window->clear();
+        window->clear(LibGraphics::Color::cornflowerBlue);
         window->display();
         timerThread.join();
     }
