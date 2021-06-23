@@ -4,6 +4,7 @@
 
 #include "lib_graphics/window.h"
 #include "lib_graphics/string.h"
+#include "../opengl.h"
 
 namespace LibGraphics
 {
@@ -158,6 +159,72 @@ Window::Window(String const& title) : m_pImpl{new Impl()}
 
     ShowWindow(m_pImpl->handle, SW_NORMAL);
     m_pImpl->isOpen = true;
+
+    if (!OpenGl::isInitialized())
+    {
+        OpenGl::initialize();
+    }
+
+    if (glGenBuffers != nullptr &&
+        glBindBuffer != nullptr &&
+        glBufferData != nullptr &&
+        glCreateShader != nullptr &&
+        glDeleteShader != nullptr &&
+        glShaderSource != nullptr &&
+        glCompileShader != nullptr &&
+        glCreateProgram != nullptr &&
+        glAttachShader != nullptr &&
+        glLinkProgram != nullptr &&
+        glUseProgram != nullptr &&
+        glVertexAttribPointer != nullptr &&
+        glEnableVertexAttribArray != nullptr)
+    {
+        GLfloat vertices[] {
+            -0.5f, -0.5f, 0.0f,
+             0.5f, -0.5f, 0.0f,
+             0.0f,  0.5f, 0.0f 
+        };
+
+        GLuint vertexArray{};
+        glGenVertexArrays(1, &vertexArray);
+        glBindVertexArray(vertexArray);
+
+        GLuint vertexBuffer{};
+        glGenBuffers(1, &vertexBuffer);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+        char const *vertexShaderSource = "#version 330 core\n"
+            "layout (location = 0) in vec3 aPos;\n"
+            "void main()\n"
+            "{\n"
+            "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+            "}\0";
+        const GLuint vertexShader{glCreateShader(GL_VERTEX_SHADER)};
+        glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
+        glCompileShader(vertexShader);
+
+        char const *fragmentShaderSource = "#version 330 core\n"
+            "out vec4 FragColor;\n"
+            "void main()\n"
+            "{\n"
+            "    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+            "}\0";
+        const GLuint fragmentShader{glCreateShader(GL_FRAGMENT_SHADER)};
+        glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
+        glCompileShader(fragmentShader);
+
+        const GLuint program{glCreateProgram()};
+        glAttachShader(program, vertexShader);
+        glAttachShader(program, fragmentShader);
+        glLinkProgram(program);
+        glUseProgram(program);
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (void *)0);
+        glEnableVertexAttribArray(0);
+    }
 }
 
 Window::~Window()
@@ -185,6 +252,7 @@ void Window::clear(Color const &color)
     const Color::Float floatColor = color.toFloat();
     glClearColor(floatColor.r, floatColor.g, floatColor.b, floatColor.a);
     glClear(GL_COLOR_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 void Window::display()
