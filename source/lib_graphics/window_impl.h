@@ -2,22 +2,24 @@
 
 #include <memory>
 
-#include "lib_graphics/color.h"
 #include "lib_graphics/string.h"
+#include "opengl.h"
 
 namespace LibGraphics
 {
 
-class Window
+class WindowImpl
 {
 public:
-    Window(String const &title);
-    ~Window();
+    WindowImpl();
+    ~WindowImpl();
 
+    void create(String const &title);
     bool isOpen() const;
     void pollEvents();
-    void clear(Color const &color);
     void display() const;
+
+    std::shared_ptr<OpenGl> getOpenGl() const;
 
 private:
     class Impl;

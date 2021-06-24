@@ -12,13 +12,18 @@ add_library(
     ${PROJECT_NAME} 
     include/${PROJECT_NAME}/window.h 
     include/${PROJECT_NAME}/string.h
+    include/${PROJECT_NAME}/color.h
+    source/${PROJECT_NAME}/opengl.h
+    source/${PROJECT_NAME}/window_impl.h
     source/${PROJECT_NAME}/string.cpp
     source/${PROJECT_NAME}/color.cpp
-    source/${PROJECT_NAME}/${PLATFORM}/opengl.cpp
-    source/${PROJECT_NAME}/${PLATFORM}/window.cpp)
+    source/${PROJECT_NAME}/window.cpp
+    source/${PROJECT_NAME}/${PLATFORM}/opengl_${PLATFORM}.h
+    source/${PROJECT_NAME}/${PLATFORM}/opengl_${PLATFORM}.cpp
+    source/${PROJECT_NAME}/${PLATFORM}/window_impl.cpp)
 
 if(WIN32)
-    target_link_libraries(${PROJECT_NAME} Kernel32.lib Opengl32.lib)
+    target_link_libraries(${PROJECT_NAME} Kernel32.lib)
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)

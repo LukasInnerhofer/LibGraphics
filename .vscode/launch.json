@@ -5,35 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(Windows) Starten",
+            "name": "(Windows) Start",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test/Debug/LibGraphicsTest.exe",
+            "program": "${workspaceFolder}/build/test/Debug/lib_graphics_test.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
             "console": "externalTerminal"
-        },
-        {
-            "name": "(gdb) Starten",
-            "type": "cppdbg",
-            "request": "launch",
-            "program": "\"${workspaceFolder}/build/test/Debug/LibGraphicsTest.exe\"",
-            "args": [],
-            "stopAtEntry": false,
-            "cwd": "${fileDirname}",
-            "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "miDebuggerPath": "/path/to/gdb",
-            "setupCommands": [
-                {
-                    "description": "Automatische Strukturierung und Einrückung für \"gdb\" aktivieren",
-                    "text": "-enable-pretty-printing",
-                    "ignoreFailures": true
-                }
-            ]
         }
     ]
 }
