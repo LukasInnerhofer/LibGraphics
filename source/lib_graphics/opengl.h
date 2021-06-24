@@ -38,6 +38,8 @@ namespace LibGraphics
 class OpenGl
 {
 public:
+    virtual ~OpenGl();
+
     #define GL_FUNCTION(returnType, name, ...) \
         typedef returnType (* const name ## Type)(__VA_ARGS__); \
         virtual name ## Type name(void) const = 0; \

@@ -1,9 +1,8 @@
 #pragma once
 
+#include <climits>
 #include <cuchar>
 #include <memory>
-#include <iomanip>
-#include <iostream>
 
 #include "lib_graphics/string.h"
 

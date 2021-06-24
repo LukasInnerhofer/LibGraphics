@@ -4,8 +4,10 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(lib_graphics)
 
-if(WIN32)
-    set(PLATFORM windows)
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    set(PLATFORM "windows")
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(PLATFORM "linux")
 endif()
 
 add_library(
@@ -14,6 +16,7 @@ add_library(
     include/${PROJECT_NAME}/string.h
     include/${PROJECT_NAME}/color.h
     source/${PROJECT_NAME}/opengl.h
+    source/${PROJECT_NAME}/opengl.cpp
     source/${PROJECT_NAME}/window_impl.h
     source/${PROJECT_NAME}/string.cpp
     source/${PROJECT_NAME}/color.cpp
@@ -22,12 +25,13 @@ add_library(
     source/${PROJECT_NAME}/${PLATFORM}/opengl_${PLATFORM}.cpp
     source/${PROJECT_NAME}/${PLATFORM}/window_impl.cpp)
 
-if(WIN32)
+if(${PLATFORM} STREQUAL "windows")
     target_link_libraries(${PROJECT_NAME} Kernel32.lib)
+elseif(${PLATFORM} STREQUAL "linux")
+    target_link_libraries(${PROJECT_NAME} pthread)
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
-target_include_directories(${PROJECT_NAME} PRIVATE ${PLATFORM}/include)
 
 option(TEST "Build a test executable" OFF)
 
