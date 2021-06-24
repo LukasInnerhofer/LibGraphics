@@ -23,22 +23,28 @@ WGL_FUNCTION_LIST
 
 OpenGlWindows::OpenGlWindows(HDC deviceContext)
 {
-    const HMODULE module = LoadLibraryA("opengl32.dll");
-    #define WGL_FUNCTION(returnType, name, ...) \
+    const HMODULE module = LoadLibraryW(L"opengl32.dll");
+
+    if (!wglLoaded)
+    {
+        #define WGL_FUNCTION(returnType, name, ...) \
         name = reinterpret_cast<name ## Type>(GetProcAddress(module, #name)); \
         if (name == nullptr) \
         { \
             throwSystemError("Failed to load" #name " from opengl32.dll"); \
         }
-    WGL_FUNCTION_LIST
-    #undef WGL_FUNCTION
-
+        WGL_FUNCTION_LIST
+        #undef WGL_FUNCTION
+        wglLoaded = true;
+    }
+    
     m_deviceContext = deviceContext;
     m_context = wglCreateContext(m_deviceContext);
     if (m_context == NULL)
     {
         throwSystemError("Failed to create OpenGL context");
     }
+    makeCurrent();
     
     #define GL_FUNCTION(returnType, name, ...) \
         name ## Ptr = reinterpret_cast<name ## Type>(wglGetProcAddress(#name)); \

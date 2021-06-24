@@ -160,7 +160,6 @@ void WindowImpl::create(String const &title)
     }
 
     m_pImpl->openGl = std::make_shared<OpenGlWindows>(m_pImpl->deviceContext);
-    m_pImpl->openGl->makeCurrent();
 
     ShowWindow(m_pImpl->handle, SW_NORMAL);
     m_pImpl->isOpen = true;
