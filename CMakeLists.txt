@@ -29,6 +29,7 @@ if(${PLATFORM} STREQUAL "windows")
     target_link_libraries(${PROJECT_NAME} Kernel32.lib)
 elseif(${PLATFORM} STREQUAL "linux")
     target_link_libraries(${PROJECT_NAME} pthread)
+    target_link_libraries(${PROJECT_NAME} X11)
 endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
