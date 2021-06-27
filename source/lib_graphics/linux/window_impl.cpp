@@ -50,6 +50,8 @@ void WindowImpl::create(String const &title)
 	1,
 	BlackPixel(m_pImpl->display, screen), WhitePixel(m_pImpl->display, screen));
 
+    XStoreName(m_pImpl->display, window, title.toStdString().c_str());
+
     XMapWindow(m_pImpl->display, window);
     XFlush(m_pImpl->display);
 

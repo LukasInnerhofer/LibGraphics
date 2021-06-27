@@ -82,7 +82,7 @@ void WindowImpl::create(String const &title)
         throwSystemError("Failed to get module handle");
     }
     
-    const std::wstring className = title.toWideString();
+    const std::wstring className = title.toStdWideString();
 
     const WNDCLASSW windowClass 
     {  

@@ -73,7 +73,12 @@ String::~String()
     
 }
 
-std::wstring String::toWideString() const
+std::string String::toStdString() const
+{
+    return reinterpret_cast<char const *>(m_string.c_str());
+}
+
+std::wstring String::toStdWideString() const
 {
     const size_t length{std::mbstowcs(
         nullptr, 

@@ -20,8 +20,9 @@ public:
     String(std::u16string const &string);
     String(std::u32string const &string);
     ~String();
-
-    std::wstring toWideString() const;
+  
+    std::string toStdString() const;
+    std::wstring toStdWideString() const;
 
 private:
     std::u8string m_string;

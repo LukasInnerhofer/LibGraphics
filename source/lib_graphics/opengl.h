@@ -30,7 +30,7 @@ using GLfloat = float;
 using GLclampf = float;
 using GLdouble = double;
 using GLclampd= double;
-using GLsizeiptr = ptrdiff_t;
+using GLsizeiptr = std::ptrdiff_t;
 
 namespace LibGraphics
 {
