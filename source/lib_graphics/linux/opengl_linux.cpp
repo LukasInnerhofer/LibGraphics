@@ -1,4 +1,5 @@
 #include <string>
+
 #include "opengl_linux.h"
 
 namespace LibGraphics
@@ -37,3 +38,4 @@ GL_FUNCTION_LIST
 #undef GL_FUNCTION
 
 }
+

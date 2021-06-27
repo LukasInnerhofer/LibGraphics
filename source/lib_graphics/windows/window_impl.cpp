@@ -59,7 +59,9 @@ public:
     bool isOpen;
 };
 
-WindowImpl::WindowImpl() : m_pImpl{new Impl{}}
+WindowImpl::WindowImpl(std::shared_ptr<std::queue<Window::Event>> events) : 
+    m_pImpl{new Impl{}},
+    m_events{events}
 {
     
 }

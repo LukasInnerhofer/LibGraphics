@@ -14,9 +14,11 @@ public:
     std::shared_ptr<OpenGl> openGl;
 };
 
-Window::Window(String const& title) : m_pImpl{new Impl{}}
+Window::Window(String const& title) : 
+    m_pImpl{new Impl{}},
+    m_events{std::make_shared<std::queue<Window::Event>>()}
 {
-    m_pImpl->osImpl.create(title);
+    m_pImpl->osImpl.create(title, m_events);
     m_pImpl->openGl = m_pImpl->osImpl.getOpenGl();
 }
 
@@ -30,9 +32,16 @@ bool Window::isOpen() const
     return m_pImpl->osImpl.isOpen();
 }
 
-void Window::pollEvents()
+bool Window::pollEvent(Window::Event &event)
 {
     m_pImpl->osImpl.pollEvents();
+
+    if (m_events->size() > 0)
+    {
+        event = m_events->front();
+        return true;
+    }
+    return false;
 }
 
 void Window::clear(Color const &color)
@@ -57,4 +66,10 @@ void Window::display() const
     m_pImpl->osImpl.display();
 }
 
+void Window::close()
+{
+    m_pImpl->osImpl.close();
 }
+
+}
+

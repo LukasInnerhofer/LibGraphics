@@ -2,7 +2,7 @@
 #include <stdexcept>
 #include <thread>
 #include <X11/Xlib.h>
-#include <iostream>
+
 #include "../window_impl.h"
 #include "../opengl.h"
 #include "opengl_linux.h"
@@ -19,9 +19,10 @@ public:
     bool isOpen;
 };
 
-WindowImpl::WindowImpl() : m_pImpl{new Impl{}}
+WindowImpl::WindowImpl() : 
+    m_pImpl{new Impl{}} 
 {
-    
+
 }
 
 WindowImpl::~WindowImpl()
@@ -29,8 +30,10 @@ WindowImpl::~WindowImpl()
 
 }
 
-void WindowImpl::create(String const &title)
+void WindowImpl::create(String const &title, std::shared_ptr<std::queue<Window::Event>> events)
 {
+    m_events = events;
+
     if (m_pImpl->isOpen)
     {
         throw std::logic_error{"Window has already been created"};
@@ -88,9 +91,7 @@ void WindowImpl::pollEvents()
 	if (event.type == ClientMessage &&
 	    event.xclient.data.l[0] == m_pImpl->wmDeleteMessage)
 	{
-	    XCloseDisplay(m_pImpl->display);
-	    m_pImpl->isOpen = false;
-	    break;
+            m_events->push(Window::Event{Window::EventType::Closed});
 	}
     }
 }
@@ -107,6 +108,13 @@ std::shared_ptr<OpenGl> WindowImpl::getOpenGl() const
 
 void WindowImpl::display() const
 {
+    
+}
+
+void WindowImpl::close()
+{
+    XCloseDisplay(m_pImpl->display);
+    m_pImpl->isOpen = false;
 }
 
 }

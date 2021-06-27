@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <queue>
 
 #include "lib_graphics/color.h"
 #include "lib_graphics/string.h"
@@ -11,17 +12,37 @@ namespace LibGraphics
 class Window
 {
 public:
+    enum class EventType { Closed };
+    typedef struct EventTag
+    {
+        EventType type;
+
+        EventTag() : type{EventType::Closed}
+        {
+
+        }
+
+        EventTag(EventType type) : type{type}
+        {
+
+        }
+    } Event;
+
     Window(String const &title);
     ~Window();
 
     bool isOpen() const;
-    void pollEvents();
+    bool pollEvent(Event &event);
     void clear(Color const &color);
     void display() const;
+    void close();
 
 private:
+    std::shared_ptr<std::queue<Event>> m_events;
+
     class Impl;
     std::unique_ptr<Impl> m_pImpl;
 };
 
 }
+
