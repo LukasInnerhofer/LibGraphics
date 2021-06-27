@@ -53,6 +53,12 @@
         "xlocmon": "cpp",
         "xloctime": "cpp",
         "cuchar": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "algorithm": "cpp",
+        "deque": "cpp",
+        "queue": "cpp",
+        "sstream": "cpp",
+        "stop_token": "cpp",
+        "vector": "cpp"
     }
 }

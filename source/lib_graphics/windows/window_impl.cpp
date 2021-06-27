@@ -41,9 +41,7 @@ public:
         {
         case WM_CLOSE:
             assert(hWnd == handle);
-            DestroyWindow(hWnd);
-            ReleaseDC(hWnd, deviceContext);
-            isOpen = false;
+            events->push(Window::Event{Window::EventType::Closed});
             break;
 
         default:
@@ -54,14 +52,14 @@ public:
     }
 
     std::shared_ptr<OpenGl> openGl{nullptr};
+    std::shared_ptr<std::queue<Window::Event>> events{nullptr};
     HWND handle{nullptr};
     HDC deviceContext{nullptr};
     bool isOpen;
 };
 
-WindowImpl::WindowImpl(std::shared_ptr<std::queue<Window::Event>> events) : 
-    m_pImpl{new Impl{}},
-    m_events{events}
+WindowImpl::WindowImpl() : 
+    m_pImpl{new Impl{}}
 {
     
 }
@@ -71,8 +69,11 @@ WindowImpl::~WindowImpl()
 
 }
 
-void WindowImpl::create(String const &title)
+void WindowImpl::create(String const &title, std::shared_ptr<std::queue<Window::Event>> events)
 {
+    m_events = events;
+    m_pImpl->events = m_events;
+
     if (m_pImpl->isOpen)
     {
         throw std::logic_error("Window has already been created");
@@ -190,6 +191,13 @@ std::shared_ptr<OpenGl> WindowImpl::getOpenGl() const
 void WindowImpl::display() const
 {
     SwapBuffers(m_pImpl->deviceContext);
+}
+
+void WindowImpl::close()
+{
+    DestroyWindow(m_pImpl->handle);
+    ReleaseDC(m_pImpl->handle, m_pImpl->deviceContext);
+    m_pImpl->isOpen = false;
 }
 
 }
