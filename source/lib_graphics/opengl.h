@@ -68,6 +68,12 @@ public:
 
     virtual void makeCurrent() const = 0;
     virtual bool isCurrent() const = 0;
+
+protected:
+    #define GL_FUNCTION(returnType, name, ...) \
+    returnType (* name ## Ptr)(__VA_ARGS__);
+    GL_FUNCTION_LIST
+    #undef GL_FUNCTION
 };
 
 }

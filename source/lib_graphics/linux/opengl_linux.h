@@ -1,5 +1,8 @@
 #pragma once
 
+#include <X11/Xlib.h>
+#include <GL/glx.h>
+
 #include "../opengl.h"
 
 namespace LibGraphics
@@ -8,7 +11,7 @@ namespace LibGraphics
 class OpenGlLinux : public OpenGl
 {
 public:
-    OpenGlLinux();
+    OpenGlLinux(Display *display, ::Window window, XVisualInfo *visualInfo);
     ~OpenGlLinux();
 
     #define GL_FUNCTION(returnType, name, ...) \
@@ -19,6 +22,11 @@ public:
 
     void makeCurrent() const override;
     bool isCurrent() const override;
+
+private:
+    Display *m_display;
+    ::Window m_window;
+    GLXContext m_context;
 };
 
 }

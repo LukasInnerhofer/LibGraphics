@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <thread>
 #include <X11/Xlib.h>
+#include <GL/glx.h>
 
 #include "../window_impl.h"
 #include "../opengl.h"
@@ -14,6 +15,7 @@ class WindowImpl::Impl
 {
 public:
     Display *display;
+    ::Window window;
     Atom wmDeleteMessage;
     std::shared_ptr<OpenGl> openGl{nullptr};
     bool isOpen;
@@ -32,12 +34,12 @@ WindowImpl::~WindowImpl()
 
 void WindowImpl::create(String const &title, std::shared_ptr<std::queue<Window::Event>> events)
 {
-    m_events = events;
-
     if (m_pImpl->isOpen)
     {
         throw std::logic_error{"Window has already been created"};
     }
+    
+    m_events = events;
 
     // NULL => Use DISPLAY environment variable
     m_pImpl->display = XOpenDisplay(NULL);
@@ -46,24 +48,41 @@ void WindowImpl::create(String const &title, std::shared_ptr<std::queue<Window::
 	throw std::runtime_error{"Failed to connect to X server."};
     }
 
-    const int screen{DefaultScreen(m_pImpl->display)};
-    const ::Window window = XCreateSimpleWindow(
-        m_pImpl->display,
-	RootWindow(m_pImpl->display, screen),
-	10, 10,
-	100, 100,
-	1,
-	BlackPixel(m_pImpl->display, screen), WhitePixel(m_pImpl->display, screen));
+    GLint attributes[] {GLX_RGBA, GLX_DEPTH_SIZE, 24, GLX_DOUBLEBUFFER, None};
+    XVisualInfo *visualInfo{glXChooseVisual(m_pImpl->display, 0, attributes)};
+    if (visualInfo == NULL)
+    {
+        throw std::runtime_error{"Failed to choose visual"};
+    }
 
-    XStoreName(m_pImpl->display, window, title.toStdString().c_str());
+    ::Window const rootWindow{DefaultRootWindow(m_pImpl->display)};
+    Colormap const colorMap{XCreateColormap(m_pImpl->display, rootWindow, visualInfo->visual, AllocNone)};
+
+    XSetWindowAttributes setWindowAttributes;
+    setWindowAttributes.colormap = colorMap;
+    setWindowAttributes.event_mask = ExposureMask | KeyPressMask;
+
+    m_pImpl->window = XCreateWindow(
+        m_pImpl->display,
+        rootWindow,
+        0, 0,
+        600, 600,
+        0,
+        visualInfo->depth,
+        InputOutput,
+        visualInfo->visual,
+        CWColormap | CWEventMask,
+        &setWindowAttributes);
+
+    XStoreName(m_pImpl->display, m_pImpl->window, title.toStdString().c_str());
 
     m_pImpl->wmDeleteMessage = XInternAtom(m_pImpl->display, "WM_DELETE_WINDOW", true);
-    XSetWMProtocols(m_pImpl->display, window, &m_pImpl->wmDeleteMessage, 1);
+    XSetWMProtocols(m_pImpl->display, m_pImpl->window, &m_pImpl->wmDeleteMessage, 1);
 
-    XMapWindow(m_pImpl->display, window);
+    XMapWindow(m_pImpl->display, m_pImpl->window);
     XFlush(m_pImpl->display);
 
-    m_pImpl->openGl = std::make_shared<OpenGlLinux>();
+    m_pImpl->openGl = std::make_shared<OpenGlLinux>(m_pImpl->display, m_pImpl->window, visualInfo);
     m_pImpl->isOpen = true;
 }
 
@@ -108,7 +127,7 @@ std::shared_ptr<OpenGl> WindowImpl::getOpenGl() const
 
 void WindowImpl::display() const
 {
-    
+    glXSwapBuffers(m_pImpl->display, m_pImpl->window);
 }
 
 void WindowImpl::close()
