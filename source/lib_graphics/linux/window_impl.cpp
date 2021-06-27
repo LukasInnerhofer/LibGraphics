@@ -1,7 +1,8 @@
 #include <cassert>
 #include <stdexcept>
+#include <thread>
 #include <X11/Xlib.h>
-
+#include <iostream>
 #include "../window_impl.h"
 #include "../opengl.h"
 #include "opengl_linux.h"
@@ -13,6 +14,7 @@ class WindowImpl::Impl
 {
 public:
     Display *display;
+    Atom wmDeleteMessage;
     std::shared_ptr<OpenGl> openGl{nullptr};
     bool isOpen;
 };
@@ -31,14 +33,14 @@ void WindowImpl::create(String const &title)
 {
     if (m_pImpl->isOpen)
     {
-        throw std::logic_error("Window has already been created");
+        throw std::logic_error{"Window has already been created"};
     }
 
     // NULL => Use DISPLAY environment variable
     m_pImpl->display = XOpenDisplay(NULL);
     if (m_pImpl->display == NULL)
     {
-	throw std::runtime_error("Failed to connect to X server.");
+	throw std::runtime_error{"Failed to connect to X server."};
     }
 
     const int screen{DefaultScreen(m_pImpl->display)};
@@ -52,6 +54,9 @@ void WindowImpl::create(String const &title)
 
     XStoreName(m_pImpl->display, window, title.toStdString().c_str());
 
+    m_pImpl->wmDeleteMessage = XInternAtom(m_pImpl->display, "WM_DELETE_WINDOW", true);
+    XSetWMProtocols(m_pImpl->display, window, &m_pImpl->wmDeleteMessage, 1);
+
     XMapWindow(m_pImpl->display, window);
     XFlush(m_pImpl->display);
 
@@ -61,15 +66,42 @@ void WindowImpl::create(String const &title)
 
 bool WindowImpl::isOpen() const
 {
+    if (m_pImpl == nullptr)
+    {
+	throw std::logic_error{"Window has not been created"};
+    }
+
     return m_pImpl->isOpen;
 }
 
 void WindowImpl::pollEvents()
 {
+    if (m_pImpl == nullptr)
+    {
+	throw std::logic_error{"Window has not been created"};
+    }
+
+    XEvent event;
+    while (XPending(m_pImpl->display))
+    {
+        XNextEvent(m_pImpl->display, &event);
+	if (event.type == ClientMessage &&
+	    event.xclient.data.l[0] == m_pImpl->wmDeleteMessage)
+	{
+	    XCloseDisplay(m_pImpl->display);
+	    m_pImpl->isOpen = false;
+	    break;
+	}
+    }
 }
 
 std::shared_ptr<OpenGl> WindowImpl::getOpenGl() const
 {
+    if (m_pImpl == nullptr)
+    {
+	throw std::logic_error{"Window has not been created"};
+    }
+
     return m_pImpl->openGl;
 }
 
@@ -78,3 +110,4 @@ void WindowImpl::display() const
 }
 
 }
+
