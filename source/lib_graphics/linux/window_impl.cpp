@@ -100,18 +100,18 @@ void WindowImpl::pollEvents()
 {
     if (m_pImpl == nullptr)
     {
-	throw std::logic_error{"Window has not been created"};
+        throw std::logic_error{"Window has not been created"};
     }
 
     XEvent event;
     while (XPending(m_pImpl->display))
     {
         XNextEvent(m_pImpl->display, &event);
-	if (event.type == ClientMessage &&
-	    event.xclient.data.l[0] == m_pImpl->wmDeleteMessage)
-	{
+        if (event.type == ClientMessage &&
+            event.xclient.data.l[0] == m_pImpl->wmDeleteMessage)
+        {
             m_events->push(Window::Event{Window::EventType::Closed});
-	}
+        }
     }
 }
 
