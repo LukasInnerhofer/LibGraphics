@@ -38,8 +38,6 @@ public:
     void close();
 
 private:
-    std::shared_ptr<std::queue<Event>> m_events;
-
     class Impl;
     std::unique_ptr<Impl> m_pImpl;
 };

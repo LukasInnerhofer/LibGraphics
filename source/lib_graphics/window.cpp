@@ -12,13 +12,13 @@ class Window::Impl
 public:
     WindowImpl osImpl;
     std::shared_ptr<OpenGl> openGl;
+    std::shared_ptr<std::queue<Window::Event>> events{new std::queue<Window::Event>{}};
 };
 
 Window::Window(String const& title) : 
-    m_pImpl{new Impl{}},
-    m_events{std::make_shared<std::queue<Window::Event>>()}
+    m_pImpl{new Impl{}}
 {
-    m_pImpl->osImpl.create(title, m_events);
+    m_pImpl->osImpl.create(title, m_pImpl->events);
     m_pImpl->openGl = m_pImpl->osImpl.getOpenGl();
 }
 
@@ -36,9 +36,9 @@ bool Window::pollEvent(Window::Event &event)
 {
     m_pImpl->osImpl.pollEvents();
 
-    if (m_events->size() > 0)
+    if (m_pImpl->events->size() > 0)
     {
-        event = m_events->front();
+        event = m_pImpl->events->front();
         return true;
     }
     return false;
