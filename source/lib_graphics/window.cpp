@@ -1,3 +1,5 @@
+#include <memory>
+#include <queue>
 #include <stdexcept>
 
 #include "lib_graphics/window.h"

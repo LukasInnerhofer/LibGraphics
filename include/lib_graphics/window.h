@@ -1,8 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <queue>
-
 #include "lib_graphics/color.h"
 #include "lib_graphics/string.h"
 
