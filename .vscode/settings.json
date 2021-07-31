@@ -59,6 +59,23 @@
         "queue": "cpp",
         "sstream": "cpp",
         "stop_token": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "cstdarg": "cpp",
+        "cwctype": "cpp",
+        "array": "cpp",
+        "*.tcc": "cpp",
+        "condition_variable": "cpp",
+        "list": "cpp",
+        "map": "cpp",
+        "unordered_map": "cpp",
+        "functional": "cpp",
+        "memory_resource": "cpp",
+        "numeric": "cpp",
+        "optional": "cpp",
+        "random": "cpp",
+        "string_view": "cpp",
+        "mutex": "cpp",
+        "ranges": "cpp",
+        "cinttypes": "cpp"
     }
 }
