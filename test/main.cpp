@@ -35,7 +35,7 @@ int main()
         if (window->pollEvent(event))
         {
             switch (event.type)
-            {
+            { 
             case LibGraphics::Window::EventType::Closed:
                 window->close();
                 break;
