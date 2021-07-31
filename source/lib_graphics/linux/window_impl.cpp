@@ -127,6 +127,11 @@ std::shared_ptr<OpenGl> WindowImpl::getOpenGl() const
 
 void WindowImpl::display() const
 {
+    if (!m_pImpl->isOpen)
+    {
+        return;
+    }
+
     glXSwapBuffers(m_pImpl->display, m_pImpl->window);
 }
 

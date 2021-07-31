@@ -46,6 +46,11 @@ bool Window::pollEvent(Window::Event &event)
 
 void Window::clear(Color const &color)
 {
+    if (!m_pImpl->osImpl.isOpen())
+    {
+        return;
+    }
+
     if (!m_pImpl->openGl->glClearColorSupported() ||
         !m_pImpl->openGl->glClearSupported())
     {
