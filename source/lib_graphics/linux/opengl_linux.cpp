@@ -38,14 +38,10 @@ bool OpenGlLinux::isCurrent() const
 }
 
 #define GL_FUNCTION(returnType, name, ...) \
-    OpenGl::name ## Type OpenGlLinux::name() const \
-    { \
-        return name ## Ptr; \
-    } \
-    bool OpenGlLinux::name ## Supported() const \
-    { \
-	return name ## Ptr != nullptr; \
-    }
+bool OpenGlLinux::name ## Supported() const \
+{ \
+    return name ## Ptr != nullptr; \
+}
 GL_FUNCTION_LIST
 #undef GL_FUNCTION
 

@@ -15,7 +15,6 @@ public:
     ~OpenGlLinux();
 
     #define GL_FUNCTION(returnType, name, ...) \
-        name ## Type name(void) const override; \
         bool name ## Supported() const override;
     GL_FUNCTION_LIST
     #undef GL_FUNCTION

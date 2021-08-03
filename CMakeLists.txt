@@ -12,14 +12,22 @@ endif()
 
 add_library(
     ${PROJECT_NAME} 
-    include/${PROJECT_NAME}/window.h 
-    include/${PROJECT_NAME}/string.h
+    include/${PROJECT_NAME}/canvas.h
     include/${PROJECT_NAME}/color.h
-    source/${PROJECT_NAME}/opengl.h
-    source/${PROJECT_NAME}/opengl.cpp
-    source/${PROJECT_NAME}/window_impl.h
-    source/${PROJECT_NAME}/string.cpp
+    include/${PROJECT_NAME}/drawable.h
+    include/${PROJECT_NAME}/rectangle.h
+    include/${PROJECT_NAME}/string.h
+    include/${PROJECT_NAME}/vector.h
+    include/${PROJECT_NAME}/vertex_buffer.h 
+    include/${PROJECT_NAME}/window.h 
+    source/${PROJECT_NAME}/canvas.cpp
     source/${PROJECT_NAME}/color.cpp
+    source/${PROJECT_NAME}/drawable.cpp
+    source/${PROJECT_NAME}/opengl.cpp
+    source/${PROJECT_NAME}/rectangle.cpp
+    source/${PROJECT_NAME}/string.cpp
+    source/${PROJECT_NAME}/vertex_buffer.cpp
+    source/${PROJECT_NAME}/window_impl.h
     source/${PROJECT_NAME}/window.cpp
     source/${PROJECT_NAME}/${PLATFORM}/opengl_${PLATFORM}.h
     source/${PROJECT_NAME}/${PLATFORM}/opengl_${PLATFORM}.cpp
@@ -35,8 +43,15 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
-option(TEST "Build a test executable" OFF)
+option(LIB_GRAPHICS_TEST "Build a test executable" OFF)
+option(LIB_GRAPHICS_PRINT_GL_ERRORS "Print errors of the underlying graphics library to stderr" OFF)
 
-if(TEST)
+if(LIB_GRAPHICS_TEST)
     add_subdirectory(test)
+endif()
+
+if(LIB_GRAPHICS_PRINT_GL_ERRORS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_GRAPHICS_PRINT_GL_ERRORS=1)
+else()
+    target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_GRAPHICS_PRINT_GL_ERRORS=0)
 endif()

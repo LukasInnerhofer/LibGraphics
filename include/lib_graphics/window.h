@@ -1,12 +1,13 @@
 #pragma once
 
+#include "lib_graphics/canvas.h"
 #include "lib_graphics/color.h"
 #include "lib_graphics/string.h"
 
 namespace LibGraphics
 {
 
-class Window
+class Window : public Canvas
 {
 public:
     enum class EventType { Closed };
@@ -31,6 +32,8 @@ public:
     bool isOpen() const;
     bool pollEvent(Event &event);
     void clear(Color const &color);
+    using Canvas::draw;
+    void draw(VertexBuffer const &vertexBuffer) override;
     void display() const;
     void close();
 

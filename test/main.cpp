@@ -5,6 +5,7 @@
 #include <system_error>
 #include <thread>
 
+#include "lib_graphics/rectangle.h"
 #include "lib_graphics/window.h"
 
 int main()
@@ -12,17 +13,18 @@ int main()
     std::setlocale(LC_ALL, "en_US.utf8");
 
     std::unique_ptr<LibGraphics::Window> window;
-    const std::u32string title{U"z\u00DF\u6C34\U0001F34C"};
+    std::u32string const title{U"z\u00DF\u6C34\U0001F34C"};
     try
     {
         window = std::make_unique<LibGraphics::Window>(title);
     }
-    catch(const std::system_error& e)
+    catch (std::exception const &e)
     {
         std::cerr << e.what() << '\n';
         return 1;
     }
 
+    LibGraphics::Rectangle rectangle{LibGraphics::Vector{1, 1}, LibGraphics::Vector{1, 1}};
     LibGraphics::Window::Event event;
     std::thread timerThread;
     LibGraphics::Color color{LibGraphics::Color::cornflowerBlue};
@@ -30,7 +32,6 @@ int main()
     while(window->isOpen())
     {
         timerThread = std::thread{[]() { std::this_thread::sleep_for(std::chrono::milliseconds(16)); }};
-        
         
         if (window->pollEvent(event))
         {
@@ -54,6 +55,8 @@ int main()
         }
 
         color.setG(color.getG() + colorCountUp - !colorCountUp);
+        
+        window->draw(rectangle);
         
         window->display();
         timerThread.join();
