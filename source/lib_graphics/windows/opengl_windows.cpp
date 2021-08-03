@@ -57,10 +57,6 @@ OpenGlWindows::OpenGlWindows(HDC deviceContext)
 }
 
 #define GL_FUNCTION(returnType, name, ...) \
-OpenGl::name ## Type OpenGlWindows::name() const \
-{ \
-    return name ## Ptr; \
-} \
 bool OpenGlWindows::name ## Supported() const \
 { \
     return name ## Ptr != nullptr; \
