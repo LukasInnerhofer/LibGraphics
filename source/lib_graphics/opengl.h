@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <string>
 
 #define GL_FALSE    0
 #define GL_TRUE     1
