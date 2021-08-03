@@ -21,7 +21,7 @@ VertexBuffer::Primitive VertexBuffer::getPrimitive() const
 
 size_t VertexBuffer::getCount() const
 {
-    return m_data.size() / 3;
+    return m_data.size() / 6;
 }
 
 }

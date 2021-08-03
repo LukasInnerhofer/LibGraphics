@@ -14,25 +14,25 @@ namespace LibGraphics
 static char const *vertexShaderSource {
     "#version 330 core\n"
     "layout (location = 0) in vec3 position;\n"
-    //"layout (location = 1) in vec3 inColor;\n"
+    "layout (location = 1) in vec3 color;\n"
     
-    //"out vec4 outColor;\n"
+    "out vec4 vertexColor;\n"
 
     "void main()\n"
     "{\n"
     "   gl_Position = vec4(position, 1.0);\n"
-    //"   outColor = vec4(inColor, 1.0);\n"
+    "   vertexColor = vec4(color, 1.0);\n"
     "}"
 };
 
 static char const *fragmentShaderSource {
     "#version 330 core\n"
-    //"in vec4 inColor;\n"
-    "out vec4 outColor;\n"
+    "in vec4 vertexColor;\n"
+    "out vec4 fragmentColor;\n"
 
     "void main()\n"
     "{\n"
-    "   outColor = vec4(1.0, 1.0, 0.0, 1.0);\n"
+        "fragmentColor = vertexColor;\n"
     "}"
 };
 
@@ -107,9 +107,7 @@ public:
     GLuint shaderProgram;
     GLuint vertexArray;
 };
-static float const vd[] {-1.0f, -1.0f, 0.0f,
-            1.0f, -1.0f, 0.0f,
-            0.0f,  1.0f, 0.0f,};
+
 Window::Window(String const &title) : 
     m_pImpl{new Impl{}}
 {
@@ -119,12 +117,6 @@ Window::Window(String const &title) :
     m_pImpl->buildShaderProgram();
 
     m_pImpl->openGl->glGenVertexArrays()(1, &m_pImpl->vertexArray);
-    //m_pImpl->openGl->glGenBuffers()(1, &glVertexBuffer);
-    
-
-    // color
-    //m_pImpl->openGl->glVertexAttribPointer()(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(3));
-    //m_pImpl->openGl->glEnableVertexAttribArray()(1);
 }
 
 Window::~Window()
@@ -186,8 +178,10 @@ void Window::draw(VertexBuffer const &vertexBuffer)
         m_pImpl->openGl->glGenBuffers()(1, &glVertexBuffer);
         m_pImpl->openGl->glBindBuffer()(GL_ARRAY_BUFFER, glVertexBuffer);
         m_pImpl->openGl->glBindVertexArray()(m_pImpl->vertexArray);
-        m_pImpl->openGl->glVertexAttribPointer()(0, 3, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(0));
+        m_pImpl->openGl->glVertexAttribPointer()(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(0));
         m_pImpl->openGl->glEnableVertexAttribArray()(0);
+        m_pImpl->openGl->glVertexAttribPointer()(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
+        m_pImpl->openGl->glEnableVertexAttribArray()(1);
         m_pImpl->vertexBuffers[&vertexBuffer] = glVertexBuffer;
     }
     else
@@ -208,7 +202,7 @@ void Window::draw(VertexBuffer const &vertexBuffer)
     m_pImpl->openGl->glDrawArrays()(
         primitiveMap.at(vertexBuffer.getPrimitive()),
         0,
-        vertexBuffer.getCount());
+        static_cast<GLsizei>(vertexBuffer.getCount()));
 }
 
 void Window::display() const
