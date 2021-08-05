@@ -12,14 +12,16 @@ class Canvas;
 class Drawable
 {
 public:
-    Drawable(VertexBuffer const &vertexBuffer);
+    Drawable();
 
     VertexBuffer const &getVertexBuffer() const;
+    Vector<float> const &getPosition() const;
+    virtual void setPosition(Vector<float> const &position);
     virtual void draw(Canvas &canvas) = 0;
 
 protected:
     VertexBuffer m_vertexBuffer;
-    Vector m_position;
+    Vector<float> m_position;
 };
 
 }

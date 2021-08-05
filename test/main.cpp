@@ -24,11 +24,14 @@ int main()
         return 1;
     }
 
-    LibGraphics::Rectangle rectangle{LibGraphics::Vector{1, 1}, LibGraphics::Vector{1, 1}};
+    LibGraphics::Rectangle rectangle{ 
+        {0.5f, 0.5f}, 
+        {{0.5f, 0.0f, 0.0f}}};
     LibGraphics::Window::Event event;
     std::thread timerThread;
     LibGraphics::Color color{LibGraphics::Color::cornflowerBlue};
     bool colorCountUp = true;
+    uint64_t time = 0;
     while(window->isOpen())
     {
         timerThread = std::thread{[]() { std::this_thread::sleep_for(std::chrono::milliseconds(16)); }};
@@ -56,10 +59,12 @@ int main()
 
         color.setG(color.getG() + colorCountUp - !colorCountUp);
         
+        rectangle.setPosition({std::sinf((time / 50.0f)), std::cosf(time / 100.0f)});
         window->draw(rectangle);
         
         window->display();
         timerThread.join();
+        ++time;
     }
     
     return 0;
