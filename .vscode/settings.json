@@ -76,6 +76,7 @@
         "string_view": "cpp",
         "mutex": "cpp",
         "ranges": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "xtree": "cpp"
     }
 }
