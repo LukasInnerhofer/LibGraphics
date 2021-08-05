@@ -6,9 +6,22 @@ namespace LibGraphics
 const Color Color::red{0xFF, 0x00, 0x00};
 const Color Color::cornflowerBlue{0x89, 0xA6, 0xFB};
 
+Color::Color() : Color{0xFF, 0xFF, 0xFF}
+{
+    
+}
+
 Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : m_r{r}, m_g{g}, m_b{b}, m_a{a}
 {
 
+}
+
+Color::Color(Float const &floatColor)
+{
+    m_r = static_cast<uint8_t>(floatColor.r * 0xFF);
+    m_g = static_cast<uint8_t>(floatColor.g * 0xFF);
+    m_b = static_cast<uint8_t>(floatColor.b * 0xFF);
+    m_a = static_cast<uint8_t>(floatColor.a * 0xFF);
 }
 
 void Color::setR(uint8_t r)

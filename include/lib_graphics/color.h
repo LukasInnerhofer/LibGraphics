@@ -13,7 +13,7 @@ class Color
         float r, g, b, a;
         static constexpr float max = 1.f;
 
-        constexpr FloatTag(float r, float g, float b, float a = max) : r{r}, g{g}, b{b}, a{a}
+        FloatTag(float r, float g, float b, float a = max) : r{r}, g{g}, b{b}, a{a}
         {
 
         }
@@ -22,7 +22,9 @@ class Color
     uint8_t m_r, m_g, m_b, m_a;
     static constexpr uint8_t max = 0xFF;
 
+    Color();
     Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a = max);
+    Color(Float const &floatColor);
 
     void setR(uint8_t r);
     void setG(uint8_t g);
