@@ -58,6 +58,11 @@ String::String(std::u8string const &string) : m_string{string}
 
 }
 
+String::String(std::u8string &&string) : m_string{std::move(string)}
+{
+    
+}
+
 String::String(std::u16string const &string) : String(string.c_str())
 {
 

@@ -17,6 +17,7 @@ public:
     String(char32_t const *string);
     String(std::string const &string);
     String(std::u8string const &string);
+    String(std::u8string &&string);
     String(std::u16string const &string);
     String(std::u32string const &string);
     ~String();
