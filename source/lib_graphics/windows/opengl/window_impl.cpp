@@ -1,10 +1,10 @@
 #include <cassert>
 #include <Windows.h>
 
-#include "../window_impl.h"
-#include "../opengl.h"
+#include "../../opengl/window_impl.h"
+#include "../../opengl/opengl.h"
 #include "opengl_windows.h"
-#include "utilities.h"
+#include "../utilities.h"
 
 namespace LibGraphics
 {

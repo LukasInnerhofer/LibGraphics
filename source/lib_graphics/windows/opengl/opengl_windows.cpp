@@ -3,7 +3,7 @@
 #include <gl/GL.h>
 #include <iostream>
 #include "opengl_windows.h"
-#include "utilities.h"
+#include "../utilities.h"
 
 namespace LibGraphics
 {

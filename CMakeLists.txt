@@ -23,15 +23,15 @@ add_library(
     source/${PROJECT_NAME}/canvas.cpp
     source/${PROJECT_NAME}/color.cpp
     source/${PROJECT_NAME}/drawable.cpp
-    source/${PROJECT_NAME}/opengl.cpp
     source/${PROJECT_NAME}/rectangle.cpp
     source/${PROJECT_NAME}/string.cpp
     source/${PROJECT_NAME}/vertex_buffer.cpp
-    source/${PROJECT_NAME}/window_impl.h
-    source/${PROJECT_NAME}/window.cpp
-    source/${PROJECT_NAME}/${PLATFORM}/opengl_${PLATFORM}.h
-    source/${PROJECT_NAME}/${PLATFORM}/opengl_${PLATFORM}.cpp
-    source/${PROJECT_NAME}/${PLATFORM}/window_impl.cpp)
+    source/${PROJECT_NAME}/${PLATFORM}/opengl/opengl_${PLATFORM}.h
+    source/${PROJECT_NAME}/${PLATFORM}/opengl/opengl_${PLATFORM}.cpp
+    source/${PROJECT_NAME}/${PLATFORM}/opengl/window_impl.cpp
+    source/${PROJECT_NAME}/opengl/opengl.cpp
+    source/${PROJECT_NAME}/opengl/window_impl.h
+    source/${PROJECT_NAME}/opengl/window.cpp)
 
 if(${PLATFORM} STREQUAL "windows")
     target_link_libraries(${PROJECT_NAME} Kernel32.lib)

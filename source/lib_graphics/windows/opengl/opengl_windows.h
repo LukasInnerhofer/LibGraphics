@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 
-#include "../opengl.h"
+#include "../../opengl/opengl.h"
 
 namespace LibGraphics
 {
