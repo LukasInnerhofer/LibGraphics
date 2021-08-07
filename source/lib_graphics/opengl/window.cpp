@@ -7,6 +7,8 @@
 #include "lib_graphics/window.h"
 #include "lib_graphics/string.h"
 #include "window_impl.h"
+#include "shader.h"
+#include "shader_program.h"
 
 namespace LibGraphics
 {
@@ -44,76 +46,32 @@ static std::map<VertexBuffer::Primitive, GLenum> const primitiveMap {
 class Window::Impl
 {
 public:
-    void buildShaderProgram()
+    Impl(String const &title) : 
+        osImpl{title, events},
+        openGl{osImpl.getOpenGl()},
+        shaders{{
+            std::make_shared<Shader>(openGl, vertexShaderSource, GL_VERTEX_SHADER)}, 
+            std::make_shared<Shader>(openGl, fragmentShaderSource, GL_FRAGMENT_SHADER)},
+        shaderProgram{new ShaderProgram{openGl, shaders}}
     {
-        int success;
-        std::vector<char> infoLog;
-        GLint infoLogLength;
-
-        vertexShader = openGl->glCreateShader()(GL_VERTEX_SHADER);
-        openGl->glShaderSource()(vertexShader, 1, &vertexShaderSource, nullptr);
-        openGl->glCompileShader()(vertexShader);
-        openGl->glGetShaderiv()(vertexShader, GL_COMPILE_STATUS, &success);
-        if (!success)
-        {
-            openGl->glGetShaderiv()(vertexShader, GL_INFO_LOG_LENGTH, &infoLogLength);
-            infoLog.resize(infoLogLength + 1);
-            openGl->glGetShaderInfoLog()(vertexShader, infoLogLength, nullptr, &*infoLog.begin());
-            throw std::runtime_error{
-                std::string{"LibGraphics::Window Error. Failed to compile vertex shader.\n"}
-                .append(infoLog.data())
-            };
-        }
-
-        fragmentShader = openGl->glCreateShader()(GL_FRAGMENT_SHADER);
-        openGl->glShaderSource()(fragmentShader, 1, &fragmentShaderSource, nullptr);
-        openGl->glCompileShader()(fragmentShader);
-        openGl->glGetShaderiv()(fragmentShader, GL_COMPILE_STATUS, &success);
-        if (!success)
-        {
-            openGl->glGetShaderiv()(fragmentShader, GL_INFO_LOG_LENGTH, &infoLogLength);
-            infoLog.resize(infoLogLength + 1);
-            openGl->glGetShaderInfoLog()(fragmentShader, infoLogLength, nullptr, &*infoLog.begin());
-            throw std::runtime_error{
-                std::string{"LibGraphics::Window Error. Failed to compile fragment shader.\n"}
-                .append(infoLog.data())
-            };
-        }
-
-        shaderProgram = openGl->glCreateProgram()();
-        openGl->glAttachShader()(shaderProgram, vertexShader);
-        openGl->glAttachShader()(shaderProgram, fragmentShader);
-        openGl->glLinkProgram()(shaderProgram);
-        openGl->glGetProgramiv()(shaderProgram, GL_LINK_STATUS, &success);
-        if (!success)
-        {
-            openGl->glGetProgramiv()(shaderProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
-            infoLog.resize(infoLogLength + 1);
-            openGl->glGetProgramInfoLog()(shaderProgram, infoLogLength, nullptr, &*infoLog.begin());
-            throw std::runtime_error{
-                std::string{"LibGraphics::Window Error. Failed to link shader program.\n"}
-                .append(infoLog.data())
-            };
-        }
+        
     }
 
+    std::shared_ptr<std::queue<Window::Event>> events{new std::queue<Window::Event>{}};
     WindowImpl osImpl;
     std::shared_ptr<OpenGl> openGl;
-    std::shared_ptr<std::queue<Window::Event>> events{new std::queue<Window::Event>{}};
     std::map<VertexBuffer const *, std::pair<GLuint, GLuint>> vertexBuffers;
     
-    GLuint vertexShader;
-    GLuint fragmentShader;
-    GLuint shaderProgram;
+    std::vector<std::shared_ptr<Shader>> shaders;
+    std::unique_ptr<ShaderProgram> shaderProgram;
+
+    bool clearSupported;
 };
 
 Window::Window(String const &title) : 
-    m_pImpl{new Impl{}}
+    m_pImpl{new Impl{title}}
 {
-    m_pImpl->osImpl.create(title, m_pImpl->events);
-    m_pImpl->openGl = m_pImpl->osImpl.getOpenGl();
 
-    m_pImpl->buildShaderProgram();
 }
 
 Window::~Window()
@@ -167,7 +125,7 @@ void Window::draw(VertexBuffer const &vertexBuffer)
         return;
     }
 
-    m_pImpl->openGl->glUseProgram()(m_pImpl->shaderProgram);
+    m_pImpl->openGl->glUseProgram()(m_pImpl->shaderProgram->getId());
 
     GLuint glVertexBuffer;
     GLuint glVertexArray;
@@ -222,9 +180,8 @@ void Window::close()
         return;
     }
 
-    m_pImpl->openGl->glDeleteShader()(m_pImpl->vertexShader);
-    m_pImpl->openGl->glDeleteShader()(m_pImpl->fragmentShader);
-    m_pImpl->openGl->glDeleteProgram()(m_pImpl->shaderProgram);
+    m_pImpl->shaderProgram = nullptr;
+    m_pImpl->shaders.clear();
 
     // If we stored VBOs contiguously we could delete them with one call :^)
     for (std::pair<VertexBuffer const *, std::pair<GLuint, GLuint>> vertexBuffer : m_pImpl->vertexBuffers)

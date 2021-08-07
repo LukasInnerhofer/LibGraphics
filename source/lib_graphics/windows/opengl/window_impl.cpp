@@ -58,18 +58,8 @@ public:
     bool isOpen;
 };
 
-WindowImpl::WindowImpl() : 
+WindowImpl::WindowImpl(String const &title, std::shared_ptr<std::queue<Window::Event>> events) : 
     m_pImpl{new Impl{}}
-{
-    
-}
-
-WindowImpl::~WindowImpl()
-{
-
-}
-
-void WindowImpl::create(String const &title, std::shared_ptr<std::queue<Window::Event>> events)
 {
     m_events = events;
     m_pImpl->events = m_events;
@@ -166,6 +156,11 @@ void WindowImpl::create(String const &title, std::shared_ptr<std::queue<Window::
 
     ShowWindow(m_pImpl->handle, SW_NORMAL);
     m_pImpl->isOpen = true;
+}
+
+WindowImpl::~WindowImpl()
+{
+
 }
 
 bool WindowImpl::isOpen() const

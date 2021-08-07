@@ -32,6 +32,10 @@ add_library(
     source/${PROJECT_NAME}/${PLATFORM}/opengl/opengl_${PLATFORM}.cpp
     source/${PROJECT_NAME}/${PLATFORM}/opengl/window_impl.cpp
     source/${PROJECT_NAME}/opengl/opengl.cpp
+    source/${PROJECT_NAME}/opengl/opengl.h
+    source/${PROJECT_NAME}/opengl/shader_program.h
+    source/${PROJECT_NAME}/opengl/shader.cpp
+    source/${PROJECT_NAME}/opengl/shader.h
     source/${PROJECT_NAME}/opengl/window_impl.h
     source/${PROJECT_NAME}/opengl/window.cpp)
 

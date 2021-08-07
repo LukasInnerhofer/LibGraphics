@@ -13,10 +13,9 @@ namespace LibGraphics
 class WindowImpl
 {
 public:
-    WindowImpl();
+    WindowImpl(String const &title, std::shared_ptr<std::queue<Window::Event>> events);
     ~WindowImpl();
 
-    void create(String const &title, std::shared_ptr<std::queue<Window::Event>> events);
     bool isOpen() const;
     void pollEvents();
     void display() const;
