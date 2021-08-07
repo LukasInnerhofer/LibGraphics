@@ -15,4 +15,9 @@ void DrawableVertexBuffer::setPosition(const Vector<float> &position)
     Drawable::setPosition(position);
 }
 
+void DrawableVertexBuffer::draw(Canvas &canvas)
+{
+    canvas.draw(m_vertexBuffer);
+}
+
 }

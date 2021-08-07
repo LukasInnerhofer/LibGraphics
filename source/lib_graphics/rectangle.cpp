@@ -25,9 +25,4 @@ Rectangle::Rectangle(Vector<float> const &size, Color const &fillColor) :
     
 }
 
-void Rectangle::draw(Canvas &canvas)
-{
-    canvas.draw(m_vertexBuffer);
-}
-
 }
