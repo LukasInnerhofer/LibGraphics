@@ -14,7 +14,6 @@ class Drawable
 public:
     Drawable();
 
-    VertexBuffer const &getVertexBuffer() const;
     Vector<float> const &getPosition() const;
     virtual void setPosition(Vector<float> const &position);
     virtual void draw(Canvas &canvas) = 0;

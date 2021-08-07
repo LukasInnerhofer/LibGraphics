@@ -9,11 +9,6 @@ Drawable::Drawable() :
 
 }
 
-VertexBuffer const &Drawable::getVertexBuffer() const
-{
-    return m_vertexBuffer;
-}
-
 Vector<float> const &Drawable::getPosition() const
 {
     return m_position;
