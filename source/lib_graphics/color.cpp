@@ -16,14 +16,6 @@ Color::Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : m_r{r}, m_g{g}, m_b{b
 
 }
 
-Color::Color(Float const &floatColor)
-{
-    m_r = static_cast<uint8_t>(floatColor.r * 0xFF);
-    m_g = static_cast<uint8_t>(floatColor.g * 0xFF);
-    m_b = static_cast<uint8_t>(floatColor.b * 0xFF);
-    m_a = static_cast<uint8_t>(floatColor.a * 0xFF);
-}
-
 void Color::setR(uint8_t r)
 {
     m_r = r;
