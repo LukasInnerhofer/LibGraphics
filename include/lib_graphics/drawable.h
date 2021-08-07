@@ -2,7 +2,6 @@
 
 #include "lib_graphics/canvas.h"
 #include "lib_graphics/vector.h"
-#include "lib_graphics/vertex_buffer.h"
 
 namespace LibGraphics
 {
@@ -19,7 +18,6 @@ public:
     virtual void draw(Canvas &canvas) = 0;
 
 protected:
-    VertexBuffer m_vertexBuffer;
     Vector<float> m_position;
 };
 

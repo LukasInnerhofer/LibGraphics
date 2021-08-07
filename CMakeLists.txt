@@ -15,6 +15,7 @@ add_library(
     include/${PROJECT_NAME}/canvas.h
     include/${PROJECT_NAME}/color.h
     include/${PROJECT_NAME}/drawable.h
+    include/${PROJECT_NAME}/drawable_vertex_buffer.h
     include/${PROJECT_NAME}/rectangle.h
     include/${PROJECT_NAME}/string.h
     include/${PROJECT_NAME}/vector.h
@@ -23,6 +24,7 @@ add_library(
     source/${PROJECT_NAME}/canvas.cpp
     source/${PROJECT_NAME}/color.cpp
     source/${PROJECT_NAME}/drawable.cpp
+    source/${PROJECT_NAME}/drawable_vertex_buffer.cpp
     source/${PROJECT_NAME}/rectangle.cpp
     source/${PROJECT_NAME}/string.cpp
     source/${PROJECT_NAME}/vertex_buffer.cpp

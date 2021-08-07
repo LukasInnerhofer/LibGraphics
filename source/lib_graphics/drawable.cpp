@@ -3,8 +3,7 @@
 namespace LibGraphics
 {
 
-Drawable::Drawable() :
-    m_vertexBuffer{{}, VertexBuffer::Primitive::Triangle}
+Drawable::Drawable()
 {
 
 }

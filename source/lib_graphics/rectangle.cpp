@@ -25,12 +25,6 @@ Rectangle::Rectangle(Vector<float> const &size, Color const &fillColor) :
     
 }
 
-void Rectangle::setPosition(Vector<float> const &position)
-{
-    m_vertexBuffer.move(position - m_position);
-    Drawable::setPosition(position);
-}
-
 void Rectangle::draw(Canvas &canvas)
 {
     canvas.draw(m_vertexBuffer);
