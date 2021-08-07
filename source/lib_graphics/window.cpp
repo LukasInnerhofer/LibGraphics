@@ -100,12 +100,11 @@ public:
     WindowImpl osImpl;
     std::shared_ptr<OpenGl> openGl;
     std::shared_ptr<std::queue<Window::Event>> events{new std::queue<Window::Event>{}};
-    std::map<VertexBuffer const *, GLuint> vertexBuffers;
+    std::map<VertexBuffer const *, std::pair<GLuint, GLuint>> vertexBuffers;
     
     GLuint vertexShader;
     GLuint fragmentShader;
     GLuint shaderProgram;
-    GLuint vertexArray;
 };
 
 Window::Window(String const &title) : 
@@ -115,8 +114,6 @@ Window::Window(String const &title) :
     m_pImpl->openGl = m_pImpl->osImpl.getOpenGl();
 
     m_pImpl->buildShaderProgram();
-
-    m_pImpl->openGl->glGenVertexArrays()(1, &m_pImpl->vertexArray);
 }
 
 Window::~Window()
@@ -173,24 +170,27 @@ void Window::draw(VertexBuffer const &vertexBuffer)
     m_pImpl->openGl->glUseProgram()(m_pImpl->shaderProgram);
 
     GLuint glVertexBuffer;
+    GLuint glVertexArray;
     if (!m_pImpl->vertexBuffers.contains(&vertexBuffer))
     {
         m_pImpl->openGl->glGenBuffers()(1, &glVertexBuffer);
         m_pImpl->openGl->glBindBuffer()(GL_ARRAY_BUFFER, glVertexBuffer);
-        m_pImpl->openGl->glBindVertexArray()(m_pImpl->vertexArray);
+        m_pImpl->openGl->glGenVertexArrays()(1, &glVertexArray);
+        m_pImpl->openGl->glBindVertexArray()(glVertexArray);
         m_pImpl->openGl->glVertexAttribPointer()(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(0));
         m_pImpl->openGl->glEnableVertexAttribArray()(0);
         m_pImpl->openGl->glVertexAttribPointer()(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
         m_pImpl->openGl->glEnableVertexAttribArray()(1);
-        m_pImpl->vertexBuffers[&vertexBuffer] = glVertexBuffer;
+        m_pImpl->vertexBuffers[&vertexBuffer] = { glVertexBuffer, glVertexArray };
     }
     else
     {
-        glVertexBuffer = m_pImpl->vertexBuffers[&vertexBuffer];
+        glVertexBuffer = m_pImpl->vertexBuffers[&vertexBuffer].first;
+        glVertexArray = m_pImpl->vertexBuffers[&vertexBuffer].second;
     }
 
     m_pImpl->openGl->glBindBuffer()(GL_ARRAY_BUFFER, glVertexBuffer);
-    m_pImpl->openGl->glBindVertexArray()(m_pImpl->vertexArray);
+    m_pImpl->openGl->glBindVertexArray()(glVertexArray);
     
     std::vector<float> const &vertexData{vertexBuffer.getData()};
     m_pImpl->openGl->glBufferData()(
@@ -227,13 +227,12 @@ void Window::close()
     m_pImpl->openGl->glDeleteProgram()(m_pImpl->shaderProgram);
 
     // If we stored VBOs contiguously we could delete them with one call :^)
-    for (std::pair<VertexBuffer const *, GLuint> vertexBuffer : m_pImpl->vertexBuffers)
+    for (std::pair<VertexBuffer const *, std::pair<GLuint, GLuint>> vertexBuffer : m_pImpl->vertexBuffers)
     {
-        m_pImpl->openGl->glDeleteBuffers()(1, &vertexBuffer.second);
+        m_pImpl->openGl->glDeleteBuffers()(1, &vertexBuffer.second.first);
+        m_pImpl->openGl->glDeleteVertexArrays()(1, &vertexBuffer.second.second);
     }
     m_pImpl->vertexBuffers.clear();
-
-    m_pImpl->openGl->glDeleteVertexArrays()(1, &m_pImpl->vertexArray);
 
     m_pImpl->osImpl.close();
 }
