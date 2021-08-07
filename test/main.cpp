@@ -26,7 +26,12 @@ int main()
 
     LibGraphics::Rectangle rectangle{ 
         {0.5f, 0.5f}, 
-        {{0.5f, 0.0f, 0.0f}}};
+        {{0.5f, 0.0f, 0.0f}}
+    };
+    LibGraphics::Rectangle rectangle1{
+        {0.25f, 0.25f},
+        {{0.0f, 0.0f, 0.5f}}
+    };
     LibGraphics::Window::Event event;
     std::thread timerThread;
     LibGraphics::Color color{LibGraphics::Color::cornflowerBlue};
@@ -34,7 +39,7 @@ int main()
     uint64_t time = 0;
     while(window->isOpen())
     {
-        timerThread = std::thread{[]() { std::this_thread::sleep_for(std::chrono::milliseconds(16)); }};
+        timerThread = std::thread{[]() { std::this_thread::sleep_for(std::chrono::microseconds(6944)); }};
         
         if (window->pollEvent(event))
         {
@@ -59,8 +64,10 @@ int main()
 
         color.setG(color.getG() + colorCountUp - !colorCountUp);
         
-        rectangle.setPosition({std::sinf((time / 50.0f)), std::cosf(time / 100.0f)});
+        rectangle.setPosition({std::sinf(time / 50.0f), std::cosf(time / 100.0f)});
+        rectangle1.setPosition({std::cosf(time / 20.0f), std::sinf(time / 10.0f)});
         window->draw(rectangle);
+        window->draw(rectangle1);
         
         window->display();
         timerThread.join();
