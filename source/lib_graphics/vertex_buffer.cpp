@@ -6,7 +6,7 @@ namespace LibGraphics
 VertexBuffer::VertexBuffer(std::vector<Vertex> const &vertices, Primitive primitive) :
     m_vertices{vertices},
     m_primitive{primitive},
-    m_data{vertices.size() * 6, 0.0f, std::allocator<float>()}
+    m_data{m_vertices.size() * 6, 0.0f, std::allocator<float>()}
 {
     updateData();
 }
@@ -14,7 +14,7 @@ VertexBuffer::VertexBuffer(std::vector<Vertex> const &vertices, Primitive primit
 VertexBuffer::VertexBuffer(std::vector<Vertex> &&vertices, Primitive primitive) :
     m_vertices{std::move(vertices)},
     m_primitive{primitive},
-    m_data{vertices.size() * 6, 0.0f, std::allocator<float>()}
+    m_data{m_vertices.size() * 6, 0.0f, std::allocator<float>()}
 {
     updateData();
 }
