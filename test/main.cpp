@@ -26,11 +26,11 @@ int main()
 
     LibGraphics::Rectangle rectangle{ 
         {0.5f, 0.5f}, 
-        {{0.5f, 0.0f, 0.0f}}
+        {0x80, 0x00, 0x00}
     };
     LibGraphics::Rectangle rectangle1{
         {0.25f, 0.25f},
-        {{0.0f, 0.0f, 0.5f}}
+        {0x00, 0x00, 0x80}
     };
     LibGraphics::Window::Event event;
     std::thread timerThread;
