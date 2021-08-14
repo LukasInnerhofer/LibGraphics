@@ -28,14 +28,12 @@ public:
 
     Window(String const &title);
     ~Window();
-
-    bool isOpen() const;
+    
     bool pollEvent(Event &event);
     void clear(Color const &color);
     using Canvas::draw;
     void draw(VertexBuffer const &vertexBuffer) override;
     void display() const;
-    void close();
 
 private:
     class Impl;

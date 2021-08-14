@@ -58,12 +58,12 @@ Window::Window(String const &title) :
 
 Window::~Window()
 {
-
-}
-
-bool Window::isOpen() const
-{
-    return m_pImpl->osImpl.isOpen();
+    // If we stored VBOs contiguously we could delete them with one call :^)
+    for (std::pair<VertexBuffer const *, std::pair<GLuint, GLuint>> vertexBuffer : m_pImpl->vertexBuffers)
+    {
+        m_pImpl->openGl->glDeleteBuffers()(1, &vertexBuffer.second.first);
+        m_pImpl->openGl->glDeleteVertexArrays()(1, &vertexBuffer.second.second);
+    }
 }
 
 bool Window::pollEvent(Window::Event &event)
@@ -80,11 +80,6 @@ bool Window::pollEvent(Window::Event &event)
 
 void Window::clear(Color const &color)
 {
-    if (!isOpen())
-    {
-        return;
-    }
-
     if (!m_pImpl->openGl->glClearColorSupported() ||
         !m_pImpl->openGl->glClearSupported())
     {
@@ -102,11 +97,6 @@ void Window::clear(Color const &color)
 
 void Window::draw(VertexBuffer const &vertexBuffer)
 {
-    if (!isOpen())
-    {
-        return;
-    }
-
     m_pImpl->openGl->glUseProgram()(m_pImpl->shaderProgram->getId());
 
     GLuint glVertexBuffer;
@@ -147,33 +137,7 @@ void Window::draw(VertexBuffer const &vertexBuffer)
 
 void Window::display() const
 {
-    if (!isOpen())
-    {
-        return;
-    }
-
     m_pImpl->osImpl.display();
-}
-
-void Window::close()
-{
-    if (!isOpen())
-    {
-        return;
-    }
-
-    m_pImpl->shaderProgram = nullptr;
-    m_pImpl->shaders.clear();
-
-    // If we stored VBOs contiguously we could delete them with one call :^)
-    for (std::pair<VertexBuffer const *, std::pair<GLuint, GLuint>> vertexBuffer : m_pImpl->vertexBuffers)
-    {
-        m_pImpl->openGl->glDeleteBuffers()(1, &vertexBuffer.second.first);
-        m_pImpl->openGl->glDeleteVertexArrays()(1, &vertexBuffer.second.second);
-    }
-    m_pImpl->vertexBuffers.clear();
-
-    m_pImpl->osImpl.close();
 }
 
 }

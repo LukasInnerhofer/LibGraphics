@@ -16,7 +16,6 @@ public:
     WindowImpl(String const &title, std::shared_ptr<std::queue<Window::Event>> events);
     ~WindowImpl();
 
-    bool isOpen() const;
     void pollEvents();
     void display() const;
     void close();
