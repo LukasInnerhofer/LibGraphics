@@ -3,6 +3,7 @@
 #include <string>
 
 #include "opengl.h"
+#include "lib_utilities/in_stream.h"
 
 namespace LibGraphics
 {
@@ -10,7 +11,7 @@ namespace LibGraphics
 class Shader
 {
 public:
-    Shader(std::shared_ptr<OpenGl> openGl, std::string_view source, GLenum type);
+    Shader(std::shared_ptr<OpenGl> openGl, LibUtilities::InStream<GLchar> &&source, GLenum type);
     ~Shader();
 
     GLuint getId() const;

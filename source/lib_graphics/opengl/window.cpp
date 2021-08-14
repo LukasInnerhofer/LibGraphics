@@ -1,4 +1,5 @@
 #include <cassert>
+#include <fstream>
 #include <map>
 #include <memory>
 #include <queue>
@@ -13,31 +14,6 @@
 namespace LibGraphics
 {
 
-static char const *vertexShaderSource {
-    "#version 330 core\n"
-    "layout (location = 0) in vec3 position;\n"
-    "layout (location = 1) in vec3 color;\n"
-    
-    "out vec4 vertexColor;\n"
-
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(position, 1.0);\n"
-    "   vertexColor = vec4(color, 1.0);\n"
-    "}"
-};
-
-static char const *fragmentShaderSource {
-    "#version 330 core\n"
-    "in vec4 vertexColor;\n"
-    "out vec4 fragmentColor;\n"
-
-    "void main()\n"
-    "{\n"
-        "fragmentColor = vertexColor;\n"
-    "}"
-};
-
 static std::map<VertexBuffer::Primitive, GLenum> const primitiveMap {
     { VertexBuffer::Primitive::Triangle, GL_TRIANGLES },
     { VertexBuffer::Primitive::Quad, GL_QUADS }
@@ -50,8 +26,14 @@ public:
         osImpl{title, events},
         openGl{osImpl.getOpenGl()},
         shaders{{
-            std::make_shared<Shader>(openGl, vertexShaderSource, GL_VERTEX_SHADER)}, 
-            std::make_shared<Shader>(openGl, fragmentShaderSource, GL_FRAGMENT_SHADER)},
+            std::make_shared<Shader>(
+                openGl, 
+                LibUtilities::InStream<GLchar>{std::make_shared<std::basic_ifstream<GLchar>>("vertex.glsl")}, 
+                GL_VERTEX_SHADER)}, 
+            std::make_shared<Shader>(
+                openGl, 
+                LibUtilities::InStream<GLchar>{std::make_shared<std::basic_ifstream<GLchar>>("fragment.glsl")}, 
+                GL_FRAGMENT_SHADER)},
         shaderProgram{new ShaderProgram{openGl, shaders}}
     {
         

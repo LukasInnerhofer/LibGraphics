@@ -12,8 +12,8 @@ class VertexBuffer
 public:
     enum class Primitive { Triangle, Quad };
 
-    VertexBuffer(std::vector<Vertex> const &vertices, Primitive primitive);
-    VertexBuffer(std::vector<Vertex> &&vertices, Primitive primitive);
+    VertexBuffer(std::vector<Vertex> const &vertices, Primitive primitive, bool haveTexture = false);
+    VertexBuffer(std::vector<Vertex> &&vertices, Primitive primitive, bool haveTexture = false);
 
     void move(Vector<float> const &delta);    
     std::vector<float> const &getData() const;
@@ -23,6 +23,7 @@ public:
 private:
     void updateData();
 
+    bool m_haveTexture;
     std::vector<Vertex> m_vertices;
     std::vector<float> m_data;
     Primitive m_primitive;

@@ -6,12 +6,13 @@
 namespace LibGraphics
 {
 
-Shader::Shader(std::shared_ptr<OpenGl> openGl, std::string_view source, GLuint type) :
+Shader::Shader(std::shared_ptr<OpenGl> openGl, LibUtilities::InStream<GLchar> &&source, GLuint type) :
     m_openGl{openGl}
 {
     m_id = m_openGl->glCreateShader()(type);
-    GLchar const * sourceData{source.data()};
-    m_openGl->glShaderSource()(m_id, 1, &sourceData, nullptr);
+    std::vector<GLchar> sourceData{source.readAll()};
+    GLchar const *sourcePtr{&*sourceData.cbegin()};
+    m_openGl->glShaderSource()(m_id, 1, &sourcePtr, nullptr);
     m_openGl->glCompileShader()(m_id);
 
     int success;

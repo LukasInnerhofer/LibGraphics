@@ -30,7 +30,7 @@
         "program": "${workspaceFolder}/build/test/Debug/lib_graphics_test.exe",
         "args": [],
         "stopAtEntry": false,
-        "cwd": "${fileDirname}",
+        "cwd": "${workspaceFolder}/build/test/Debug",
         "environment": [],
         "console": "externalTerminal"
     }
