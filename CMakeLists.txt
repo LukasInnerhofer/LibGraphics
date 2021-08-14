@@ -49,8 +49,14 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
+add_subdirectory(lib_utilities)
+target_include_directories(${PROJECT_NAME} PRIVATE lib_utilities/include)
+#target_link_libraries(${PROJECT_NAME} lib_utilities)
+
 option(LIB_GRAPHICS_TEST "Build a test executable" OFF)
 option(LIB_GRAPHICS_PRINT_GL_ERRORS "Print errors of the underlying graphics library to stderr" OFF)
+
+set(CMAKE_VS_INCLUDE_INSTALL_TO_DEFAULT_BUILD 1)
 
 if(LIB_GRAPHICS_TEST)
     add_subdirectory(test)
@@ -61,3 +67,6 @@ if(LIB_GRAPHICS_PRINT_GL_ERRORS)
 else()
     target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_GRAPHICS_PRINT_GL_ERRORS=0)
 endif()
+
+install(FILES ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/vertex.glsl DESTINATION bin)
+install(FILES ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/fragment.glsl DESTINATION bin)
