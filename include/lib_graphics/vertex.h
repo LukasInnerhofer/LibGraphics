@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include "lib_graphics/color.h"
 #include "lib_graphics/vector.h"
 
@@ -10,6 +12,7 @@ typedef struct VertexTag
 {
     Color color;
     Vector<float> position;
+    std::optional<Vector<float>> textureCoordinate;
 } Vertex;
 
 }
