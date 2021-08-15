@@ -18,7 +18,6 @@ public:
 
     void pollEvents();
     void display() const;
-    void close();
 
     std::shared_ptr<OpenGl> getOpenGl() const;
 
