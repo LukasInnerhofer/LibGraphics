@@ -3,7 +3,7 @@
 #include <X11/Xlib.h>
 #include <GL/glx.h>
 
-#include "../opengl.h"
+#include "../../opengl/opengl.h"
 
 namespace LibGraphics
 {
