@@ -1,5 +1,6 @@
 #include <chrono>
 #include <clocale>
+#include <cmath>
 #include <iomanip>
 #include <iostream>
 #include <system_error>
@@ -80,9 +81,9 @@ int main()
         }
 
         color.setG(color.getG() + colorCountUp - !colorCountUp);
-
-        rectangle.setPosition({std::sinf(time / 50.0f), std::cosf(time / 100.0f)});
-        rectangle1.setPosition({std::cosf(time / 20.0f), std::sinf(time / 10.0f)});
+        
+        rectangle.setPosition({std::sin(time / 50.0f), std::cos(time / 100.0f)});
+        rectangle1.setPosition({std::cos(time / 20.0f), std::sin(time / 10.0f)});
         window->draw(rectangle);
         window->draw(rectangle1);
         window->draw(rectangle2);
