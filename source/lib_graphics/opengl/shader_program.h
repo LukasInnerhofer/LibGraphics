@@ -13,15 +13,12 @@ namespace LibGraphics
 class ShaderProgram
 {
 public:
-    template <typename T>
-    ShaderProgram(std::shared_ptr<OpenGl> openGl, T const &shaders) :
+    template <typename ...ShaderT>
+    ShaderProgram(std::shared_ptr<OpenGl> openGl, ShaderT const &...shaders) :
         m_openGl{openGl}
     {
         m_id = m_openGl->glCreateProgram()();
-        for (std::shared_ptr<Shader> const &shader : shaders)
-        {
-            m_openGl->glAttachShader()(m_id, shader->getId());
-        }
+        (m_openGl->glAttachShader()(m_id, shaders->getId()), ...);
         m_openGl->glLinkProgram()(m_id);
         int success;
         m_openGl->glGetProgramiv()(m_id, GL_LINK_STATUS, &success);
