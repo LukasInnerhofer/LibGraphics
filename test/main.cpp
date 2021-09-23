@@ -4,6 +4,7 @@
 #include <iostream>
 #include <system_error>
 #include <thread>
+#include <utility>
 
 #include "lib_graphics/rectangle.h"
 #include "lib_graphics/window.h"
@@ -24,14 +25,40 @@ int main()
         return 1;
     }
 
-    LibGraphics::Rectangle rectangle{ 
-        {0.5f, 0.5f}, 
-        {0x80, 0x00, 0x00}
+    std::vector<uint8_t> data(100 * 100 * 3);
+    uint8_t temp = 0x80;
+    for (size_t i = 0; i < data.size(); ++i)
+    {
+        data[i] = temp++;
+    }
+    LibGraphics::Rectangle rectangle{
+        {0.5f, 0.5f},
+        {0x80, 0x00, 0x00},
+        std::make_shared<LibGraphics::Texture>(
+            std::move(data),
+            LibGraphics::Texture::SizeVector{100, 100}
+        )
     };
+
     LibGraphics::Rectangle rectangle1{
         {0.25f, 0.25f},
         {0x00, 0x00, 0x80}
     };
+
+    LibGraphics::Rectangle rectangle2{
+        {0.1f, 0.1f},
+        {0, 0, 0},
+        std::make_shared<LibGraphics::Texture>(
+            std::vector<uint8_t>{
+                0x80, 0x00, 0x00,
+                0x00, 0x80, 0x00,
+                0x00, 0x00, 0x80,
+                0x80, 0x80, 0x80
+            },
+            LibGraphics::Texture::SizeVector{2, 2}
+        )
+    };
+
     LibGraphics::Window::Event event;
     std::thread timerThread;
     LibGraphics::Color color{LibGraphics::Color::cornflowerBlue};
@@ -53,12 +80,13 @@ int main()
         }
 
         color.setG(color.getG() + colorCountUp - !colorCountUp);
-        
+
         rectangle.setPosition({std::sinf(time / 50.0f), std::cosf(time / 100.0f)});
         rectangle1.setPosition({std::cosf(time / 20.0f), std::sinf(time / 10.0f)});
         window->draw(rectangle);
         window->draw(rectangle1);
-        
+        window->draw(rectangle2);
+
         window->display();
         timerThread.join();
         ++time;
@@ -66,13 +94,13 @@ int main()
         if (window->pollEvent(event))
         {
             switch (event.type)
-            { 
+            {
             case LibGraphics::Window::EventType::Closed:
                 window = nullptr;
                 break;
             }
         }
     }
-    
+
     return 0;
 }

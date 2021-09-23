@@ -3,26 +3,50 @@
 namespace LibGraphics
 {
 
-Rectangle::Rectangle(Vector<float> const &position, Vector<float> const &size, Color const &fillColor) :
+Rectangle::Rectangle(
+    Vector<float> const &position,
+    Vector<float> const &size,
+    Color const &fillColor,
+    std::optional<std::shared_ptr<Texture>> texture) :
     m_size{size},
     m_fillColor{fillColor}
 {
     m_position = position;
     m_vertexBuffer = VertexBuffer{
-        {
-            {fillColor, position}, 
-            {fillColor, position + Vector<float>{size.getX(), 0}},
-            {fillColor, position + size},
-            {fillColor, position + Vector<float>{0, size.getY()}}
+        std::vector<Vertex>{
+            {
+                fillColor,
+                position,
+                Vertex::TextureCoordinate{0.0f, 0.0f}
+            },
+            {
+                fillColor,
+                position + Vector<float>{size.getX(), 0},
+                Vertex::TextureCoordinate{1.0f, 0.0f}
+            },
+            {
+                fillColor,
+                position + size,
+                Vertex::TextureCoordinate{1.0f, 1.0f}
+            },
+            {
+                fillColor,
+                position + Vector<float>{0, size.getY()},
+                Vertex::TextureCoordinate{0.0f, 1.0f}
+            }
         },
-        VertexBuffer::Primitive::Quad
+        VertexBuffer::Primitive::Quad,
+        texture
     };
 }
 
-Rectangle::Rectangle(Vector<float> const &size, Color const &fillColor) :
-    Rectangle{defaultPosition, size, fillColor}
+Rectangle::Rectangle(
+    Vector<float> const &size,
+    Color const &fillColor,
+    std::optional<std::shared_ptr<Texture>> texture) :
+    Rectangle{defaultPosition, size, fillColor, texture}
 {
-    
+
 }
 
 }

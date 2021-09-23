@@ -11,7 +11,7 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
 endif()
 
 add_library(
-    ${PROJECT_NAME} 
+    ${PROJECT_NAME}
     include/${PROJECT_NAME}/canvas.h
     include/${PROJECT_NAME}/color.h
     include/${PROJECT_NAME}/drawable.h
@@ -19,18 +19,21 @@ add_library(
     include/${PROJECT_NAME}/rectangle.h
     include/${PROJECT_NAME}/string.h
     include/${PROJECT_NAME}/vector.h
-    include/${PROJECT_NAME}/vertex_buffer.h 
-    include/${PROJECT_NAME}/window.h 
+    include/${PROJECT_NAME}/vertex_buffer.h
+    include/${PROJECT_NAME}/window.h
     source/${PROJECT_NAME}/canvas.cpp
     source/${PROJECT_NAME}/color.cpp
     source/${PROJECT_NAME}/drawable.cpp
     source/${PROJECT_NAME}/drawable_vertex_buffer.cpp
     source/${PROJECT_NAME}/rectangle.cpp
     source/${PROJECT_NAME}/string.cpp
+    source/${PROJECT_NAME}/texture.cpp
     source/${PROJECT_NAME}/vertex_buffer.cpp
     source/${PROJECT_NAME}/${PLATFORM}/opengl/opengl_${PLATFORM}.h
     source/${PROJECT_NAME}/${PLATFORM}/opengl/opengl_${PLATFORM}.cpp
     source/${PROJECT_NAME}/${PLATFORM}/opengl/window_impl.cpp
+    source/${PROJECT_NAME}/opengl/opengl_drawable.cpp
+    source/${PROJECT_NAME}/opengl/opengl_drawable.h
     source/${PROJECT_NAME}/opengl/opengl.cpp
     source/${PROJECT_NAME}/opengl/opengl.h
     source/${PROJECT_NAME}/opengl/shader_program.h
@@ -69,4 +72,6 @@ else()
 endif()
 
 install(FILES ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/vertex.glsl DESTINATION bin)
+install(FILES ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/vertex_texture.glsl DESTINATION bin)
 install(FILES ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/fragment.glsl DESTINATION bin)
+install(FILES ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/fragment_texture.glsl DESTINATION bin)

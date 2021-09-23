@@ -7,6 +7,7 @@
 
 #include "lib_graphics/window.h"
 #include "lib_graphics/string.h"
+#include "opengl_drawable.h"
 #include "window_impl.h"
 #include "shader.h"
 #include "shader_program.h"
@@ -22,35 +23,52 @@ static std::map<VertexBuffer::Primitive, GLenum> const primitiveMap {
 class Window::Impl
 {
 public:
-    Impl(String const &title) : 
+    Impl(String const &title) :
+        events{new std::queue<Window::Event>{}},
         osImpl{title, events},
         openGl{osImpl.getOpenGl()},
-        shaders{{
-            std::make_shared<Shader>(
-                openGl, 
-                LibUtilities::InStream<GLchar>{std::make_shared<std::basic_ifstream<GLchar>>("vertex.glsl")}, 
-                GL_VERTEX_SHADER)}, 
-            std::make_shared<Shader>(
-                openGl, 
-                LibUtilities::InStream<GLchar>{std::make_shared<std::basic_ifstream<GLchar>>("fragment.glsl")}, 
-                GL_FRAGMENT_SHADER)},
-        shaderProgram{new ShaderProgram{openGl, shaders}}
+        vertexShader{
+            new Shader{
+                openGl,
+                LibUtilities::InStream<GLchar>{std::make_shared<std::basic_ifstream<GLchar>>("vertex.glsl")},
+                GL_VERTEX_SHADER}},
+        textureVertexShader{
+            new Shader{
+                openGl,
+                LibUtilities::InStream<GLchar>{std::make_shared<std::basic_ifstream<GLchar>>("vertex_texture.glsl")},
+                GL_VERTEX_SHADER}},
+        fragmentShader{
+            new Shader{
+                openGl,
+                LibUtilities::InStream<GLchar>{std::make_shared<std::basic_ifstream<GLchar>>("fragment.glsl")},
+                GL_FRAGMENT_SHADER}},
+        textureFragmentShader{
+            new Shader{
+                openGl,
+                LibUtilities::InStream<GLchar>{std::make_shared<std::basic_ifstream<GLchar>>("fragment_texture.glsl")},
+                GL_FRAGMENT_SHADER}},
+        shaderProgram{new ShaderProgram{openGl, vertexShader, fragmentShader}},
+        textureShaderProgram{new ShaderProgram{openGl, textureVertexShader, textureFragmentShader}}
     {
-        
+        //openGl->glEnable()(GL_TEXTURE);
     }
 
-    std::shared_ptr<std::queue<Window::Event>> events{new std::queue<Window::Event>{}};
+    std::shared_ptr<std::queue<Window::Event>> events;
     WindowImpl osImpl;
     std::shared_ptr<OpenGl> openGl;
-    std::map<VertexBuffer const *, std::pair<GLuint, GLuint>> vertexBuffers;
-    
-    std::vector<std::shared_ptr<Shader>> shaders;
+    std::map<VertexBuffer const *, std::unique_ptr<OpenGlDrawable>> openGlDrawables;
+
+    std::shared_ptr<Shader> vertexShader;
+    std::shared_ptr<Shader> textureVertexShader;
+    std::shared_ptr<Shader> fragmentShader;
+    std::shared_ptr<Shader> textureFragmentShader;
     std::unique_ptr<ShaderProgram> shaderProgram;
+    std::unique_ptr<ShaderProgram> textureShaderProgram;
 
     bool clearSupported;
 };
 
-Window::Window(String const &title) : 
+Window::Window(String const &title) :
     m_pImpl{new Impl{title}}
 {
 
@@ -58,12 +76,7 @@ Window::Window(String const &title) :
 
 Window::~Window()
 {
-    // If we stored VBOs contiguously we could delete them with one call :^)
-    for (std::pair<VertexBuffer const *, std::pair<GLuint, GLuint>> vertexBuffer : m_pImpl->vertexBuffers)
-    {
-        m_pImpl->openGl->glDeleteBuffers()(1, &vertexBuffer.second.first);
-        m_pImpl->openGl->glDeleteVertexArrays()(1, &vertexBuffer.second.second);
-    }
+
 }
 
 bool Window::pollEvent(Window::Event &event)
@@ -97,42 +110,73 @@ void Window::clear(Color const &color)
 
 void Window::draw(VertexBuffer const &vertexBuffer)
 {
-    m_pImpl->openGl->glUseProgram()(m_pImpl->shaderProgram->getId());
+    std::optional<std::reference_wrapper<Texture const>> texture{vertexBuffer.getTexture()};
 
-    GLuint glVertexBuffer;
-    GLuint glVertexArray;
-    if (!m_pImpl->vertexBuffers.contains(&vertexBuffer))
+    if (texture)
     {
-        m_pImpl->openGl->glGenBuffers()(1, &glVertexBuffer);
-        m_pImpl->openGl->glBindBuffer()(GL_ARRAY_BUFFER, glVertexBuffer);
-        m_pImpl->openGl->glGenVertexArrays()(1, &glVertexArray);
-        m_pImpl->openGl->glBindVertexArray()(glVertexArray);
-        m_pImpl->openGl->glVertexAttribPointer()(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(0));
-        m_pImpl->openGl->glEnableVertexAttribArray()(0);
-        m_pImpl->openGl->glVertexAttribPointer()(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
-        m_pImpl->openGl->glEnableVertexAttribArray()(1);
-        m_pImpl->vertexBuffers[&vertexBuffer] = { glVertexBuffer, glVertexArray };
+        m_pImpl->openGl->glUseProgram()(m_pImpl->textureShaderProgram->getId());
     }
     else
     {
-        glVertexBuffer = m_pImpl->vertexBuffers[&vertexBuffer].first;
-        glVertexArray = m_pImpl->vertexBuffers[&vertexBuffer].second;
+        m_pImpl->openGl->glUseProgram()(m_pImpl->shaderProgram->getId());
     }
 
-    m_pImpl->openGl->glBindBuffer()(GL_ARRAY_BUFFER, glVertexBuffer);
-    m_pImpl->openGl->glBindVertexArray()(glVertexArray);
-    
+    if (!m_pImpl->openGlDrawables.contains(&vertexBuffer))
+    {
+        m_pImpl->openGlDrawables[&vertexBuffer] = std::make_unique<OpenGlDrawable>(m_pImpl->openGl, static_cast<bool>(texture));
+        m_pImpl->openGlDrawables[&vertexBuffer]->bind();
+        if (texture)
+        {
+            m_pImpl->openGl->glVertexAttribPointer()(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void *>(0));
+            m_pImpl->openGl->glEnableVertexAttribArray()(0);
+            m_pImpl->openGl->glVertexAttribPointer()(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
+            m_pImpl->openGl->glEnableVertexAttribArray()(1);
+            m_pImpl->openGl->glVertexAttribPointer()(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void *>(6 * sizeof(float)));
+            m_pImpl->openGl->glEnableVertexAttribArray()(2);
+
+            // TODO: make these configurable
+            m_pImpl->openGl->glTexParameteri()(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            m_pImpl->openGl->glTexParameteri()(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            m_pImpl->openGl->glTexParameteri()(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            m_pImpl->openGl->glTexParameteri()(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            // TODO: Determine when to reload texture data
+            m_pImpl->openGl->glTexImage2D()(
+                GL_TEXTURE_2D,
+                0,
+                GL_RGB,
+                texture->get().getSize().getX(),
+                texture->get().getSize().getY(),
+                0,
+                GL_RGB,
+                GL_UNSIGNED_BYTE,
+                texture->get().getData().data());
+            m_pImpl->openGl->glGenerateMipmap()(GL_TEXTURE_2D);
+        }
+        else
+        {
+            m_pImpl->openGl->glVertexAttribPointer()(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(0));
+            m_pImpl->openGl->glEnableVertexAttribArray()(0);
+            m_pImpl->openGl->glVertexAttribPointer()(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
+            m_pImpl->openGl->glEnableVertexAttribArray()(1);
+        }
+    }
+    else
+    {
+        m_pImpl->openGlDrawables[&vertexBuffer]->bind();
+    }
+
     std::vector<float> const &vertexData{vertexBuffer.getData()};
     m_pImpl->openGl->glBufferData()(
-        GL_ARRAY_BUFFER, 
+        GL_ARRAY_BUFFER,
         vertexData.size() * sizeof(float),
         vertexData.data(),
         GL_STATIC_DRAW); // TODO: Determine draw type from drawables vertex buffer
-    
+
     m_pImpl->openGl->glDrawArrays()(
         primitiveMap.at(vertexBuffer.getPrimitive()),
         0,
-        static_cast<GLsizei>(vertexBuffer.getCount()));
+        static_cast<GLsizei>(vertexBuffer.getCount()));   
 }
 
 void Window::display() const
@@ -141,4 +185,3 @@ void Window::display() const
 }
 
 }
-

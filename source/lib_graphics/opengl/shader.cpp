@@ -25,7 +25,7 @@ Shader::Shader(std::shared_ptr<OpenGl> openGl, LibUtilities::InStream<GLchar> &&
         infoLog.resize(infoLogLength + 1);
         m_openGl->glGetShaderInfoLog()(m_id, infoLogLength, nullptr, &*infoLog.begin());
         throw std::runtime_error{
-            std::string{"LibGraphics::Window Error. Failed to compile shader.\n"}
+            std::string{"LibGraphics::Shader Error. Failed to compile shader.\n"}
             .append(infoLog.data())
         };
     }

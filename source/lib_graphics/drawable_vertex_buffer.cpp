@@ -4,7 +4,7 @@ namespace LibGraphics
 {
 
 DrawableVertexBuffer::DrawableVertexBuffer() :
-    m_vertexBuffer{{}, VertexBuffer::Primitive::Triangle}
+    m_vertexBuffer{std::vector<Vertex>{}, VertexBuffer::Primitive::Triangle, std::optional<std::shared_ptr<Texture>>{}}
 {
 
 }

@@ -10,9 +10,12 @@ namespace LibGraphics
 
 typedef struct VertexTag
 {
+    using TextureCoordinate = Vector<float>;
+    using PositionVector = Vector<float>;
+
     Color color;
-    Vector<float> position;
-    std::optional<Vector<float>> textureCoordinate;
+    PositionVector position;
+    std::optional<TextureCoordinate> textureCoordinate;
 } Vertex;
 
 }
