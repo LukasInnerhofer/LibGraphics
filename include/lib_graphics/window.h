@@ -18,12 +18,7 @@ public:
     {
         EventType type;
 
-        EventTag() : type{EventType::Closed}
-        {
-
-        }
-
-        EventTag(EventType type) : type{type}
+        EventTag(EventType type = EventType::Closed) : type{type}
         {
 
         }
