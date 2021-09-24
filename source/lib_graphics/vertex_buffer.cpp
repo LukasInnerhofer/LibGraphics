@@ -6,50 +6,31 @@
 namespace LibGraphics
 {
 
-void VertexBuffer::move(Vector<float> const &delta)
+size_t constexpr static floatsPerPositionVector{3};
+size_t constexpr static floatsPerColorVector{3};
+size_t constexpr static floatsPerTextureCoordinate{2};
+
+static size_t floatsPerVertex(bool hasTexture)
 {
-    assert(m_data.size() == m_vertices.size() * (3 + 3 + (static_cast<bool>(m_texture) * 2)));
-    std::vector<float>::iterator itData{m_data.begin()};
-    for (Vertex &vertex : m_vertices)
-    {
-        vertex.position += delta;
-        *itData++ = vertex.position.getX();
-        *itData++ = vertex.position.getY();
-        itData += 4 + static_cast<bool>(m_texture) * 2;
-    }
+    return floatsPerPositionVector +
+        floatsPerColorVector +
+        (floatsPerTextureCoordinate * hasTexture);
 }
 
-std::vector<float> const &VertexBuffer::getData() const
-{
-    return m_data;
-}
-
-VertexBuffer::Primitive VertexBuffer::getPrimitive() const
-{
-    return m_primitive;
-}
-
-size_t VertexBuffer::getCount() const
-{
-    return m_vertices.size();
-}
-
-std::optional<std::reference_wrapper<Texture const>> VertexBuffer::getTexture() const
-{
-    if (m_texture)
-    {
-        return {std::reference_wrapper<Texture const>{**m_texture}};
-    }
-    else
-    {
-        return {};
-    }
-}
-
-void VertexBuffer::updateData()
+VertexBuffer::VertexBuffer(
+    std::vector<Vertex> vertices, 
+    Primitive primitive, 
+    std::optional<std::shared_ptr<Texture>> texture) :
+    m_vertexCount{vertices.size()},
+    m_primitive{primitive},
+    m_texture{texture},
+    m_data{
+        vertices.size() * floatsPerVertex(static_cast<bool>(m_texture)), 
+        0.0f, 
+        std::allocator<float>{}}
 {
     std::vector<float>::iterator itData{m_data.begin()};
-    for (Vertex const &vertex : m_vertices)
+    for (Vertex const &vertex : vertices)
     {
         Color::Float const &floatColor{vertex.color.toFloat()};
         *itData++ = vertex.position.getX();
@@ -71,6 +52,45 @@ void VertexBuffer::updateData()
             *itData++ = vertex.textureCoordinate->getX();
             *itData++ = vertex.textureCoordinate->getY();
         }
+    }
+}
+
+void VertexBuffer::move(Vector<float> const &delta)
+{
+    assert(floatsPerVertex(static_cast<bool>(m_texture)) * m_vertexCount == m_data.size());
+    std::vector<float>::iterator itData{m_data.begin()};
+    for (size_t itVertices = 0; itVertices < m_vertexCount; ++itVertices)
+    {
+        *itData++ += delta.getX();
+        *itData++ += delta.getY();
+        itData += 1 + floatsPerColorVector + static_cast<bool>(m_texture) * floatsPerTextureCoordinate;
+    }
+}
+
+std::vector<float> const &VertexBuffer::getData() const
+{
+    return m_data;
+}
+
+VertexBuffer::Primitive VertexBuffer::getPrimitive() const
+{
+    return m_primitive;
+}
+
+size_t VertexBuffer::getCount() const
+{
+    return m_vertexCount;
+}
+
+std::optional<std::reference_wrapper<Texture const>> VertexBuffer::getTexture() const
+{
+    if (m_texture)
+    {
+        return {std::reference_wrapper<Texture const>{**m_texture}};
+    }
+    else
+    {
+        return {};
     }
 }
 

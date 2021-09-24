@@ -16,15 +16,10 @@ class VertexBuffer
 public:
     enum class Primitive { Triangle, Quad };
 
-    template <typename TVertices>
-    VertexBuffer(TVertices &&vertices, Primitive primitive, std::optional<std::shared_ptr<Texture>> texture = {}) :
-        m_vertices{std::forward<TVertices>(vertices)},
-        m_primitive{primitive},
-        m_texture{texture},
-        m_data{m_vertices.size() * (3 + 3 + (2 * static_cast<bool>(m_texture))), 0.0f, std::allocator<float>{}}
-    {
-        updateData();
-    }
+    VertexBuffer(
+        std::vector<Vertex> vertices,
+        Primitive primitive, 
+        std::optional<std::shared_ptr<Texture>> texture = {});
 
     void move(Vector<float> const &delta);
     std::vector<float> const &getData() const;
@@ -35,7 +30,7 @@ public:
 private:
     void updateData();
 
-    std::vector<Vertex> m_vertices;
+    size_t m_vertexCount;
     std::optional<std::shared_ptr<Texture>> m_texture;
     std::vector<float> m_data;
     Primitive m_primitive;
