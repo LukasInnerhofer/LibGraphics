@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include "lib_graphics/canvas.h"
 #include "lib_graphics/color.h"
 #include "lib_graphics/drawable_vertex_buffer.h"
 #include "lib_graphics/vector.h"

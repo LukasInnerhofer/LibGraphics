@@ -1,13 +1,16 @@
 #pragma once
 
-#include "lib_graphics/canvas.h"
 #include "lib_graphics/color.h"
+#include "lib_graphics/drawable.h"
 #include "lib_graphics/string.h"
+#include "lib_graphics/vertex_buffer.h"
 
 namespace LibGraphics
 {
 
-class Window : public Canvas
+class Drawable;
+
+class Window
 {
 public:
     enum class EventType { Closed };
@@ -31,8 +34,8 @@ public:
     
     bool pollEvent(Event &event);
     void clear(Color const &color);
-    using Canvas::draw;
-    void draw(VertexBuffer const &vertexBuffer) override;
+    void draw(Drawable &drawable);
+    void draw(VertexBuffer const &vertexBuffer);
     void display() const;
 
 private:

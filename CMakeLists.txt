@@ -12,7 +12,6 @@ endif()
 
 add_library(
     ${PROJECT_NAME}
-    include/${PROJECT_NAME}/canvas.h
     include/${PROJECT_NAME}/color.h
     include/${PROJECT_NAME}/drawable.h
     include/${PROJECT_NAME}/drawable_vertex_buffer.h
@@ -21,7 +20,6 @@ add_library(
     include/${PROJECT_NAME}/vector.h
     include/${PROJECT_NAME}/vertex_buffer.h
     include/${PROJECT_NAME}/window.h
-    source/${PROJECT_NAME}/canvas.cpp
     source/${PROJECT_NAME}/color.cpp
     source/${PROJECT_NAME}/drawable.cpp
     source/${PROJECT_NAME}/drawable_vertex_buffer.cpp

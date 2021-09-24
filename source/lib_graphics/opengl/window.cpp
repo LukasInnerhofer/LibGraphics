@@ -108,6 +108,11 @@ void Window::clear(Color const &color)
     m_pImpl->openGl->glClear()(GL_COLOR_BUFFER_BIT);
 }
 
+void Window::draw(Drawable &drawable)
+{
+    drawable.draw(*this);
+}
+
 void Window::draw(VertexBuffer const &vertexBuffer)
 {
     std::optional<std::reference_wrapper<Texture const>> texture{vertexBuffer.getTexture()};

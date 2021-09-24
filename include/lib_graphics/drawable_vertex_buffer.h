@@ -1,6 +1,6 @@
 #pragma once
 
-#include "lib_graphics/drawable.h"
+#include "lib_graphics/window.h"
 #include "lib_graphics/vertex_buffer.h"
 
 namespace LibGraphics
@@ -12,7 +12,7 @@ public:
     DrawableVertexBuffer();
 
     void setPosition(Vector<float> const &position) override;
-    void draw(Canvas &canvas) override;
+    void draw(Window &canvas) override;
 
 protected:
     VertexBuffer m_vertexBuffer;
