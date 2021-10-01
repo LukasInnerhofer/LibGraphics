@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.13.4)
 
-add_executable(${PROJECT_NAME}_test main.cpp)
+set(EXECUTABLE_NAME lib_graphics_test)
+add_executable(${EXECUTABLE_NAME} main.cpp)
 
-target_include_directories(${PROJECT_NAME}_test PRIVATE ../include)
+get_target_property(LIB_GRAPHICS_INCLUDE_DIRECTORIES lib_graphics INCLUDE_DIRECTORIES)
+target_include_directories(${EXECUTABLE_NAME} PRIVATE ${LIB_GRAPHICS_INCLUDE_DIRECTORIES})
 
-target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
+target_link_libraries(${EXECUTABLE_NAME} ${PROJECT_NAME})
 
-install(TARGETS ${PROJECT_NAME}_test RUNTIME DESTINATION bin)
+install(TARGETS ${EXECUTABLE_NAME} RUNTIME DESTINATION bin)
