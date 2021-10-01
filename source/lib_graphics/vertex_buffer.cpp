@@ -82,11 +82,11 @@ size_t VertexBuffer::getCount() const
     return m_vertexCount;
 }
 
-std::optional<std::reference_wrapper<Texture const>> VertexBuffer::getTexture() const
+std::optional<std::reference_wrapper<Texture>> VertexBuffer::getTexture(LibUtilities::Badge<Window>) const
 {
     if (m_texture)
     {
-        return {std::reference_wrapper<Texture const>{**m_texture}};
+        return {std::reference_wrapper<Texture>{**m_texture}};
     }
     else
     {

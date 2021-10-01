@@ -46,18 +46,19 @@ int main()
         {0x00, 0x00, 0x80}
     };
 
+    auto texture{std::make_shared<LibGraphics::Texture>(
+        std::vector<uint8_t>{
+            0x80, 0x00, 0x00,
+            0x00, 0x80, 0x00,
+            0x00, 0x00, 0x80,
+            0x80, 0x80, 0x80
+        },
+        LibGraphics::Texture::SizeVector{2, 2}
+    )};
     LibGraphics::Rectangle rectangle2{
         {0.1f, 0.1f},
         {0, 0, 0},
-        std::make_shared<LibGraphics::Texture>(
-            std::vector<uint8_t>{
-                0x80, 0x00, 0x00,
-                0x00, 0x80, 0x00,
-                0x00, 0x00, 0x80,
-                0x80, 0x80, 0x80
-            },
-            LibGraphics::Texture::SizeVector{2, 2}
-        )
+        texture
     };
 
     LibGraphics::Window::Event event;
@@ -82,6 +83,7 @@ int main()
 
         color.setG(color.getG() + colorCountUp - !colorCountUp);
         
+        texture->setPixel({0,0}, {static_cast<uint8_t>(time), static_cast<uint8_t>(time), static_cast<uint8_t>(time)});
         rectangle.setPosition({std::sin(time / 50.0f), std::cos(time / 100.0f)});
         rectangle1.setPosition({std::cos(time / 20.0f), std::sin(time / 10.0f)});
         window->draw(rectangle);

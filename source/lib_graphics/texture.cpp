@@ -13,4 +13,32 @@ Texture::SizeVector Texture::getSize() const
     return m_size;
 }
 
+bool Texture::isValid() const
+{
+    return m_valid;
+}
+
+bool Texture::setPixel(PositionVector const &position, Color color)
+{
+    if (position.getX() >=  m_size.getX() ||
+        position.getY() >= m_size.getY())
+    {
+        return false;
+    }
+
+    size_t const offset{position.getX() * position.getY() * bytesPerPixel};
+    m_data[offset] = color.getR();
+    m_data[offset + 1] = color.getG();
+    m_data[offset + 2] = color.getB();
+    
+    m_valid = false;
+
+    return true;
+}
+
+void Texture::validate()
+{
+    m_valid = true;
+}
+
 }

@@ -7,9 +7,14 @@
 
 #include "lib_graphics/vertex.h"
 #include "lib_graphics/texture.h"
+#include "lib_graphics/window.h"
+
+#include "lib_utilities/badge.h"
 
 namespace LibGraphics
 {
+
+class Window;
 
 class VertexBuffer
 {
@@ -23,7 +28,7 @@ public:
 
     void move(Vector<float> const &delta);
     std::vector<float> const &getData() const;
-    std::optional<std::reference_wrapper<Texture const>> getTexture() const;
+    std::optional<std::reference_wrapper<Texture>> getTexture(LibUtilities::Badge<Window>) const;
     Primitive getPrimitive() const;
     size_t getCount() const;
 

@@ -115,7 +115,7 @@ void Window::draw(Drawable &drawable)
 
 void Window::draw(VertexBuffer const &vertexBuffer)
 {
-    std::optional<std::reference_wrapper<Texture const>> texture{vertexBuffer.getTexture()};
+    std::optional<std::reference_wrapper<Texture>> texture{vertexBuffer.getTexture(LibUtilities::Badge<Window>{})};
 
     if (texture)
     {
@@ -144,19 +144,6 @@ void Window::draw(VertexBuffer const &vertexBuffer)
             m_pImpl->openGl->glTexParameteri()(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             m_pImpl->openGl->glTexParameteri()(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
             m_pImpl->openGl->glTexParameteri()(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-            // TODO: Determine when to reload texture data
-            m_pImpl->openGl->glTexImage2D()(
-                GL_TEXTURE_2D,
-                0,
-                GL_RGB,
-                texture->get().getSize().getX(),
-                texture->get().getSize().getY(),
-                0,
-                GL_RGB,
-                GL_UNSIGNED_BYTE,
-                texture->get().getData().data());
-            m_pImpl->openGl->glGenerateMipmap()(GL_TEXTURE_2D);
         }
         else
         {
@@ -169,6 +156,25 @@ void Window::draw(VertexBuffer const &vertexBuffer)
     else
     {
         m_pImpl->openGlDrawables[&vertexBuffer]->bind();
+    }
+
+    if (texture)
+    {
+        if (!texture->get().isValid())
+        {
+            m_pImpl->openGl->glTexImage2D()(
+                GL_TEXTURE_2D,
+                0,
+                GL_RGB,
+                texture->get().getSize().getX(),
+                texture->get().getSize().getY(),
+                0,
+                GL_RGB,
+                GL_UNSIGNED_BYTE,
+                texture->get().getData().data());
+            m_pImpl->openGl->glGenerateMipmap()(GL_TEXTURE_2D);
+            texture->get().validate();
+        }
     }
 
     std::vector<float> const &vertexData{vertexBuffer.getData()};

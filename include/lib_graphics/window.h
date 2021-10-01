@@ -9,6 +9,7 @@ namespace LibGraphics
 {
 
 class Drawable;
+class VertexBuffer;
 
 class Window
 {
