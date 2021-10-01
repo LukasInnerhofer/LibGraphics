@@ -51,7 +51,8 @@ endif()
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
 add_subdirectory(lib_utilities)
-target_include_directories(${PROJECT_NAME} PRIVATE lib_utilities/include)
+get_target_property(LIB_UTILITIES_INCLUDE_DIRECTORIES lib_utilities INCLUDE_DIRECTORIES)
+target_include_directories(${PROJECT_NAME} PUBLIC ${LIB_UTILITIES_INCLUDE_DIRECTORIES})
 #target_link_libraries(${PROJECT_NAME} lib_utilities)
 
 option(LIB_GRAPHICS_TEST "Build a test executable" OFF)
