@@ -10,8 +10,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     set(PLATFORM "linux")
 endif()
 
-add_library(
-    ${PROJECT_NAME}
+set(
+    PUBLIC_HEADERS
     include/${PROJECT_NAME}/color.h
     include/${PROJECT_NAME}/drawable.h
     include/${PROJECT_NAME}/drawable_vertex_buffer.h
@@ -19,7 +19,11 @@ add_library(
     include/${PROJECT_NAME}/string.h
     include/${PROJECT_NAME}/vector.h
     include/${PROJECT_NAME}/vertex_buffer.h
-    include/${PROJECT_NAME}/window.h
+    include/${PROJECT_NAME}/window.h)
+
+add_library(
+    ${PROJECT_NAME}
+    ${PUBLIC_HEADERS}
     source/${PROJECT_NAME}/color.cpp
     source/${PROJECT_NAME}/drawable.cpp
     source/${PROJECT_NAME}/drawable_vertex_buffer.cpp
@@ -53,10 +57,16 @@ target_include_directories(${PROJECT_NAME} PRIVATE include)
 option(LIB_GRAPHICS_TEST "Build a test executable" OFF)
 option(LIB_GRAPHICS_PRINT_GL_ERRORS "Print errors of the underlying graphics library to stderr" OFF)
 
-set(CMAKE_VS_INCLUDE_INSTALL_TO_DEFAULT_BUILD 1)
-
 if(LIB_GRAPHICS_TEST)
     add_subdirectory(test)
+
+    install(
+        FILES 
+        ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/vertex.glsl
+        ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/vertex_texture.glsl
+        ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/fragment.glsl
+        ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/fragment_texture.glsl
+        DESTINATION bin/${PROJECT_NAME})
 endif()
 
 if(LIB_GRAPHICS_PRINT_GL_ERRORS)
@@ -65,7 +75,5 @@ else()
     target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_GRAPHICS_PRINT_GL_ERRORS=0)
 endif()
 
-install(FILES ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/vertex.glsl DESTINATION bin)
-install(FILES ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/vertex_texture.glsl DESTINATION bin)
-install(FILES ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/fragment.glsl DESTINATION bin)
-install(FILES ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/fragment_texture.glsl DESTINATION bin)
+install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION lib/${PROJECT_NAME})
+install(FILES ${PUBLIC_HEADERS} DESTINATION include/${PROJECT_NAME})
