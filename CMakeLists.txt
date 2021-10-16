@@ -50,11 +50,6 @@ endif()
 
 target_include_directories(${PROJECT_NAME} PRIVATE include)
 
-add_subdirectory(lib_utilities)
-get_target_property(LIB_UTILITIES_INCLUDE_DIRECTORIES lib_utilities INCLUDE_DIRECTORIES)
-target_include_directories(${PROJECT_NAME} PUBLIC ${LIB_UTILITIES_INCLUDE_DIRECTORIES})
-#target_link_libraries(${PROJECT_NAME} lib_utilities)
-
 option(LIB_GRAPHICS_TEST "Build a test executable" OFF)
 option(LIB_GRAPHICS_PRINT_GL_ERRORS "Print errors of the underlying graphics library to stderr" OFF)
 
