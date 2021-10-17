@@ -17,8 +17,10 @@ set(
     include/${PROJECT_NAME}/drawable_vertex_buffer.h
     include/${PROJECT_NAME}/rectangle.h
     include/${PROJECT_NAME}/string.h
+    include/${PROJECT_NAME}/texture.h
     include/${PROJECT_NAME}/vector.h
     include/${PROJECT_NAME}/vertex_buffer.h
+    include/${PROJECT_NAME}/vertex.h
     include/${PROJECT_NAME}/window.h)
 
 add_library(
@@ -75,5 +77,5 @@ else()
     target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_GRAPHICS_PRINT_GL_ERRORS=0)
 endif()
 
-install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION lib/${PROJECT_NAME})
+install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION lib)
 install(FILES ${PUBLIC_HEADERS} DESTINATION include/${PROJECT_NAME})
