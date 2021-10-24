@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.4)
 
 set(CMAKE_CXX_STANDARD 20)
 
-project(lib_graphics)
+project(libgraphics)
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     set(PLATFORM "windows")
@@ -10,8 +10,8 @@ elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
     set(PLATFORM "linux")
 endif()
 
-set(
-    PUBLIC_HEADERS
+add_library(
+    ${PROJECT_NAME}
     include/${PROJECT_NAME}/color.h
     include/${PROJECT_NAME}/drawable.h
     include/${PROJECT_NAME}/drawable_vertex_buffer.h
@@ -21,30 +21,29 @@ set(
     include/${PROJECT_NAME}/vector.h
     include/${PROJECT_NAME}/vertex_buffer.h
     include/${PROJECT_NAME}/vertex.h
-    include/${PROJECT_NAME}/window.h)
+    include/${PROJECT_NAME}/window.h
+    source/color.cpp
+    source/drawable.cpp
+    source/drawable_vertex_buffer.cpp
+    source/rectangle.cpp
+    source/string.cpp
+    source/texture.cpp
+    source/vertex_buffer.cpp
+    source/${PLATFORM}/opengl/opengl_${PLATFORM}.h
+    source/${PLATFORM}/opengl/opengl_${PLATFORM}.cpp
+    source/${PLATFORM}/opengl/window_impl.cpp
+    source/opengl/opengl_drawable.cpp
+    source/opengl/opengl_drawable.h
+    source/opengl/opengl.cpp
+    source/opengl/opengl.h
+    source/opengl/shader_program.h
+    source/opengl/shader.cpp
+    source/opengl/shader.h
+    source/opengl/window_impl.h
+    source/opengl/window.cpp)
 
-add_library(
-    ${PROJECT_NAME}
-    ${PUBLIC_HEADERS}
-    source/${PROJECT_NAME}/color.cpp
-    source/${PROJECT_NAME}/drawable.cpp
-    source/${PROJECT_NAME}/drawable_vertex_buffer.cpp
-    source/${PROJECT_NAME}/rectangle.cpp
-    source/${PROJECT_NAME}/string.cpp
-    source/${PROJECT_NAME}/texture.cpp
-    source/${PROJECT_NAME}/vertex_buffer.cpp
-    source/${PROJECT_NAME}/${PLATFORM}/opengl/opengl_${PLATFORM}.h
-    source/${PROJECT_NAME}/${PLATFORM}/opengl/opengl_${PLATFORM}.cpp
-    source/${PROJECT_NAME}/${PLATFORM}/opengl/window_impl.cpp
-    source/${PROJECT_NAME}/opengl/opengl_drawable.cpp
-    source/${PROJECT_NAME}/opengl/opengl_drawable.h
-    source/${PROJECT_NAME}/opengl/opengl.cpp
-    source/${PROJECT_NAME}/opengl/opengl.h
-    source/${PROJECT_NAME}/opengl/shader_program.h
-    source/${PROJECT_NAME}/opengl/shader.cpp
-    source/${PROJECT_NAME}/opengl/shader.h
-    source/${PROJECT_NAME}/opengl/window_impl.h
-    source/${PROJECT_NAME}/opengl/window.cpp)
+get_target_property(LIBUTILITIES_INCLUDE_DIRECTORIES libutilities INCLUDE_DIRECTORIES)
+target_include_directories(${PROJECT_NAME} PUBLIC ${LIBUTILITIES_INCLUDE_DIRECTORIES})
 
 if(${PLATFORM} STREQUAL "windows")
     target_link_libraries(${PROJECT_NAME} Kernel32.lib)
@@ -54,28 +53,24 @@ elseif(${PLATFORM} STREQUAL "linux")
     target_link_libraries(${PROJECT_NAME} GL)
 endif()
 
-target_include_directories(${PROJECT_NAME} PRIVATE include)
+target_include_directories(${PROJECT_NAME} PUBLIC include)
 
-option(LIB_GRAPHICS_TEST "Build a test executable" OFF)
-option(LIB_GRAPHICS_PRINT_GL_ERRORS "Print errors of the underlying graphics library to stderr" OFF)
+option(LIBGRAPHICS_PRINT_GL_ERRORS "Print errors of the underlying graphics library to stderr" OFF)
 
-if(LIB_GRAPHICS_TEST)
-    add_subdirectory(test)
-
+if(DEFINED LIBGRAPHICS_INSTALL_PATH)
     install(
         FILES 
-        ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/vertex.glsl
-        ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/vertex_texture.glsl
-        ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/fragment.glsl
-        ${CMAKE_SOURCE_DIR}/source/${PROJECT_NAME}/opengl/shaders/fragment_texture.glsl
-        DESTINATION bin/${PROJECT_NAME})
-endif()
-
-if(LIB_GRAPHICS_PRINT_GL_ERRORS)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_GRAPHICS_PRINT_GL_ERRORS=1)
+        ${CMAKE_CURRENT_SOURCE_DIR}/source/opengl/shaders/vertex.glsl
+        ${CMAKE_CURRENT_SOURCE_DIR}/source/opengl/shaders/vertex_texture.glsl
+        ${CMAKE_CURRENT_SOURCE_DIR}/source/opengl/shaders/fragment.glsl
+        ${CMAKE_CURRENT_SOURCE_DIR}/source/opengl/shaders/fragment_texture.glsl
+        DESTINATION ${LIBGRAPHICS_INSTALL_PATH})
 else()
-    target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_GRAPHICS_PRINT_GL_ERRORS=0)
+    message(WARNING "No install path specified.")
 endif()
 
-install(TARGETS ${PROJECT_NAME} ARCHIVE DESTINATION lib)
-install(FILES ${PUBLIC_HEADERS} DESTINATION include/${PROJECT_NAME})
+if(LIBGRAPHICS_PRINT_GL_ERRORS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE LIBGRAPHICS_PRINT_GL_ERRORS=1)
+else()
+    target_compile_definitions(${PROJECT_NAME} PRIVATE LIBGRAPHICS_PRINT_GL_ERRORS=0)
+endif()

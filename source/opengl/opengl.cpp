@@ -1,8 +1,8 @@
 #include "opengl.h"
 
-#if LIB_GRAPHICS_PRINT_GL_ERRORS == 1
+#if LIBGRAPHICS_PRINT_GL_ERRORS == 1
 #include <iostream>
-#endif // LIB_GRAPHICS_PRINT_GL_ERRORS == 1
+#endif // LIBGRAPHICS_PRINT_GL_ERRORS == 1
 
 namespace LibGraphics
 {
@@ -15,7 +15,7 @@ OpenGl::~OpenGl()
 #define GL_FUNCTION(returnType, name, ...) \
 OpenGl::name ## Type OpenGl::name() \
 { \
-    if constexpr (LIB_GRAPHICS_PRINT_GL_ERRORS == 1) \
+    if constexpr (LIBGRAPHICS_PRINT_GL_ERRORS == 1) \
     { \
         getError(); \
         lastCommand = #name; \
@@ -25,7 +25,7 @@ OpenGl::name ## Type OpenGl::name() \
 GL_FUNCTION_LIST
 #undef GL_FUNCTION
 
-#if LIB_GRAPHICS_PRINT_GL_ERRORS == 1
+#if LIBGRAPHICS_PRINT_GL_ERRORS == 1
 void OpenGl::getError() const
 {
     if (!glGetErrorSupported())
@@ -59,7 +59,7 @@ void OpenGl::getError() const
         break;
     }
 }
-#endif // LIB_GRAPHICS_PRINT_GL_ERRORS == 1
+#endif // LIBGRAPHICS_PRINT_GL_ERRORS == 1
 
 }
 

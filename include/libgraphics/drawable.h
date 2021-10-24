@@ -1,7 +1,7 @@
 #pragma once
 
-#include "lib_graphics/window.h"
-#include "lib_graphics/vector.h"
+#include "libgraphics/window.h"
+#include "libgraphics/vector.h"
 
 namespace LibGraphics
 {

@@ -2,10 +2,10 @@
 
 #include <vector>
 
-#include "lib_graphics/color.h"
-#include "lib_graphics/drawable_vertex_buffer.h"
-#include "lib_graphics/vector.h"
-#include "lib_graphics/vertex.h"
+#include "libgraphics/color.h"
+#include "libgraphics/drawable_vertex_buffer.h"
+#include "libgraphics/vector.h"
+#include "libgraphics/vertex.h"
 
 namespace LibGraphics
 {

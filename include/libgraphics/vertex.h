@@ -2,8 +2,8 @@
 
 #include <optional>
 
-#include "lib_graphics/color.h"
-#include "lib_graphics/vector.h"
+#include "libgraphics/color.h"
+#include "libgraphics/vector.h"
 
 namespace LibGraphics
 {

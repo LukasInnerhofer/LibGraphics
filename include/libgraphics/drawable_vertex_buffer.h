@@ -1,7 +1,7 @@
 #pragma once
 
-#include "lib_graphics/window.h"
-#include "lib_graphics/vertex_buffer.h"
+#include "libgraphics/window.h"
+#include "libgraphics/vertex_buffer.h"
 
 namespace LibGraphics
 {

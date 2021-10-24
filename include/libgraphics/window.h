@@ -1,9 +1,9 @@
 #pragma once
 
-#include "lib_graphics/color.h"
-#include "lib_graphics/drawable.h"
-#include "lib_graphics/string.h"
-#include "lib_graphics/vertex_buffer.h"
+#include "libgraphics/color.h"
+#include "libgraphics/drawable.h"
+#include "libgraphics/string.h"
+#include "libgraphics/vertex_buffer.h"
 
 namespace LibGraphics
 {

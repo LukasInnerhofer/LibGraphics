@@ -5,11 +5,11 @@
 #include <utility>
 #include <vector>
 
-#include "lib_graphics/vertex.h"
-#include "lib_graphics/texture.h"
-#include "lib_graphics/window.h"
+#include "libgraphics/vertex.h"
+#include "libgraphics/texture.h"
+#include "libgraphics/window.h"
 
-#include "lib_utilities/badge.h"
+#include "libutilities/badge.h"
 
 namespace LibGraphics
 {
