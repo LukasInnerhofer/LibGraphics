@@ -7,7 +7,7 @@ Rectangle::Rectangle(
     Vector<float> const &position,
     Vector<float> const &size,
     Color const &fillColor,
-    std::optional<std::shared_ptr<Texture>> texture) :
+    std::optional<NonNullSharedPtr<Texture>> texture) :
     m_size{size},
     m_fillColor{fillColor}
 {
@@ -43,7 +43,7 @@ Rectangle::Rectangle(
 Rectangle::Rectangle(
     Vector<float> const &size,
     Color const &fillColor,
-    std::optional<std::shared_ptr<Texture>> texture) :
+    std::optional<NonNullSharedPtr<Texture>> texture) :
     Rectangle{defaultPosition, size, fillColor, texture}
 {
 

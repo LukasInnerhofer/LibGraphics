@@ -3,7 +3,7 @@
 namespace LibGraphics
 {
 
-OpenGlDrawable::OpenGlDrawable(std::shared_ptr<OpenGl> openGl, bool hasTexture) :
+OpenGlDrawable::OpenGlDrawable(NonNullSharedPtr<OpenGl> openGl, bool hasTexture) :
     m_openGl{openGl}
 {
     m_openGl->glGenBuffers()(1, &m_vertexBuffer);

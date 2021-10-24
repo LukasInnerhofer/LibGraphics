@@ -17,14 +17,12 @@ public:
     Display *display;
     ::Window window;
     Atom wmDeleteMessage;
-    std::shared_ptr<OpenGl> openGl{nullptr};
+    std::shared_ptr<OpenGl> openGl;
 };
 
-WindowImpl::WindowImpl(String const &title, std::shared_ptr<std::queue<Window::Event>> events) : 
-    m_pImpl{new Impl{}} 
+WindowImpl::WindowImpl(String const &title, NonNullSharedPtr<std::queue<Window::Event>> events) : 
+    m_pImpl{new Impl{}}, m_events{events}
 {
-    m_events = events;
-
     // NULL => Use DISPLAY environment variable
     m_pImpl->display = XOpenDisplay(NULL);
     if (m_pImpl->display == NULL)
@@ -88,7 +86,7 @@ void WindowImpl::pollEvents()
     }
 }
 
-std::shared_ptr<OpenGl> WindowImpl::getOpenGl() const
+NonNullSharedPtr<OpenGl> WindowImpl::getOpenGl() const
 {
     return m_pImpl->openGl;
 }

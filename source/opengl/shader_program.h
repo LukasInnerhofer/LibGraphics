@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <vector>
 
+#include "libutilities/non_null.h"
+
 #include "opengl.h"
 #include "shader.h"
 
@@ -14,7 +16,7 @@ class ShaderProgram
 {
 public:
     template <typename ...ShaderT>
-    ShaderProgram(std::shared_ptr<OpenGl> openGl, ShaderT const &...shaders) :
+    ShaderProgram(NonNullSharedPtr<OpenGl> openGl, ShaderT const &...shaders) :
         m_openGl{openGl}
     {
         m_id = m_openGl->glCreateProgram()();
@@ -47,7 +49,7 @@ public:
     }
 
 private:
-    std::shared_ptr<OpenGl> m_openGl;
+    NonNullSharedPtr<OpenGl> m_openGl;
     GLuint m_id;
 };
 

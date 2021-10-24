@@ -6,7 +6,7 @@
 namespace LibGraphics
 {
 
-Shader::Shader(std::shared_ptr<OpenGl> openGl, LibUtilities::InStream<GLchar> &&source, GLuint type) :
+Shader::Shader(NonNullSharedPtr<OpenGl> openGl, LibUtilities::InStream<GLchar> &&source, GLuint type) :
     m_openGl{openGl}
 {
     m_id = m_openGl->glCreateShader()(type);

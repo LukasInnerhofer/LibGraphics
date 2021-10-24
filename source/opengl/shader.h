@@ -2,8 +2,10 @@
 
 #include <string>
 
-#include "opengl.h"
 #include "libutilities/in_stream.h"
+#include "libutilities/non_null.h"
+
+#include "opengl.h"
 
 namespace LibGraphics
 {
@@ -11,13 +13,13 @@ namespace LibGraphics
 class Shader
 {
 public:
-    Shader(std::shared_ptr<OpenGl> openGl, LibUtilities::InStream<GLchar> &&source, GLenum type);
+    Shader(NonNullSharedPtr<OpenGl> openGl, LibUtilities::InStream<GLchar> &&source, GLenum type);
     ~Shader();
 
     GLuint getId() const;
 
 private:
-    std::shared_ptr<OpenGl> m_openGl;
+    NonNullSharedPtr<OpenGl> m_openGl;
     GLuint m_id;
 };
 

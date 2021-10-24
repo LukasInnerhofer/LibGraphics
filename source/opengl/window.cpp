@@ -53,17 +53,17 @@ public:
         
     }
 
-    std::shared_ptr<std::queue<Window::Event>> events;
+    NonNullSharedPtr<std::queue<Window::Event>> events;
     WindowImpl osImpl;
-    std::shared_ptr<OpenGl> openGl;
-    std::map<VertexBuffer const *, std::unique_ptr<OpenGlDrawable>> openGlDrawables;
+    NonNullSharedPtr<OpenGl> openGl;
+    std::map<VertexBuffer const *, NonNullUniquePtr<OpenGlDrawable>> openGlDrawables;
 
-    std::shared_ptr<Shader> vertexShader;
-    std::shared_ptr<Shader> textureVertexShader;
-    std::shared_ptr<Shader> fragmentShader;
-    std::shared_ptr<Shader> textureFragmentShader;
-    std::unique_ptr<ShaderProgram> shaderProgram;
-    std::unique_ptr<ShaderProgram> textureShaderProgram;
+    NonNullSharedPtr<Shader> vertexShader;
+    NonNullSharedPtr<Shader> textureVertexShader;
+    NonNullSharedPtr<Shader> fragmentShader;
+    NonNullSharedPtr<Shader> textureFragmentShader;
+    NonNullUniquePtr<ShaderProgram> shaderProgram;
+    NonNullUniquePtr<ShaderProgram> textureShaderProgram;
 
     bool clearSupported;
 };
@@ -128,8 +128,8 @@ void Window::draw(VertexBuffer const &vertexBuffer)
 
     if (!m_pImpl->openGlDrawables.contains(&vertexBuffer))
     {
-        m_pImpl->openGlDrawables[&vertexBuffer] = std::make_unique<OpenGlDrawable>(m_pImpl->openGl, static_cast<bool>(texture));
-        m_pImpl->openGlDrawables[&vertexBuffer]->bind();
+        m_pImpl->openGlDrawables.insert({&vertexBuffer, new OpenGlDrawable{m_pImpl->openGl, static_cast<bool>(texture)}});
+        m_pImpl->openGlDrawables.at(&vertexBuffer)->bind();
         if (texture)
         {
             m_pImpl->openGl->glVertexAttribPointer()(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), reinterpret_cast<void *>(0));
@@ -155,7 +155,7 @@ void Window::draw(VertexBuffer const &vertexBuffer)
     }
     else
     {
-        m_pImpl->openGlDrawables[&vertexBuffer]->bind();
+        m_pImpl->openGlDrawables.at(&vertexBuffer)->bind();
     }
 
     if (texture)

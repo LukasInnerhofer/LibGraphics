@@ -7,6 +7,8 @@
 #include "libgraphics/vector.h"
 #include "libgraphics/vertex.h"
 
+#include "libutilities/non_null.h"
+
 namespace LibGraphics
 {
 
@@ -19,11 +21,11 @@ public:
         Vector<float> const &position,
         Vector<float> const &size,
         Color const &fillColor,
-        std::optional<std::shared_ptr<Texture>> texture = {});
+        std::optional<NonNullSharedPtr<Texture>> texture = {});
     Rectangle(
         Vector<float> const &size,
         Color const &fillColor,
-        std::optional<std::shared_ptr<Texture>> texture = {});
+        std::optional<NonNullSharedPtr<Texture>> texture = {});
 
 private:
     Vector<float> m_size;

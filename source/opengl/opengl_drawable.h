@@ -2,6 +2,8 @@
 
 #include <optional>
 
+#include "libutilities/non_null.h"
+
 #include "opengl.h"
 
 namespace LibGraphics
@@ -10,7 +12,7 @@ namespace LibGraphics
 class OpenGlDrawable
 {
 public:
-    OpenGlDrawable(std::shared_ptr<OpenGl> openGl, bool hasTexture = false);
+    OpenGlDrawable(NonNullSharedPtr<OpenGl> openGl, bool hasTexture = false);
     ~OpenGlDrawable();
 
     GLuint getVertexBuffer() const;
@@ -22,7 +24,7 @@ private:
     GLuint m_vertexBuffer;
     GLuint m_vertexArray;
     std::optional<GLuint> m_texture;
-    std::shared_ptr<OpenGl> m_openGl;
+    NonNullSharedPtr<OpenGl> m_openGl;
 };
 
 }

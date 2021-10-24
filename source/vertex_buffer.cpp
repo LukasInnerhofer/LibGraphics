@@ -20,7 +20,7 @@ static size_t floatsPerVertex(bool hasTexture)
 VertexBuffer::VertexBuffer(
     std::vector<Vertex> vertices, 
     Primitive primitive, 
-    std::optional<std::shared_ptr<Texture>> texture) :
+    std::optional<NonNullSharedPtr<Texture>> texture) :
     m_vertexCount{vertices.size()},
     m_primitive{primitive},
     m_texture{texture},
@@ -82,7 +82,7 @@ size_t VertexBuffer::getCount() const
     return m_vertexCount;
 }
 
-std::optional<std::reference_wrapper<Texture>> VertexBuffer::getTexture(LibUtilities::Badge<Window>) const
+std::optional<std::reference_wrapper<Texture>> VertexBuffer::getTexture(Badge<Window>) const
 {
     if (m_texture)
     {
