@@ -20,6 +20,11 @@ static std::map<VertexBuffer::Primitive, GLenum> const primitiveMap {
     { VertexBuffer::Primitive::Quad, GL_QUADS }
 };
 
+static std::map<Texture::Filtering, GLint> const textureFilteringMap {
+    { Texture::Filtering::Nearest, GL_NEAREST },
+    { Texture::Filtering::Linear, GL_LINEAR }
+};
+
 class Window::Impl
 {
 public:
@@ -143,7 +148,7 @@ void Window::draw(VertexBuffer const &vertexBuffer)
             m_pImpl->openGl->glTexParameteri()(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             m_pImpl->openGl->glTexParameteri()(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             m_pImpl->openGl->glTexParameteri()(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-            m_pImpl->openGl->glTexParameteri()(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            m_pImpl->openGl->glTexParameteri()(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, textureFilteringMap.at(texture->get().getFiltering()));
         }
         else
         {

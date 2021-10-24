@@ -13,6 +13,11 @@ Texture::SizeVector Texture::getSize() const
     return m_size;
 }
 
+Texture::Filtering Texture::getFiltering() const
+{
+    return m_filtering;
+}
+
 bool Texture::isValid() const
 {
     return m_valid;
