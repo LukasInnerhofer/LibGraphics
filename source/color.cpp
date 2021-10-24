@@ -1,4 +1,4 @@
-#include "lib_graphics/color.h"
+#include "libgraphics/color.h"
 
 namespace LibGraphics
 {

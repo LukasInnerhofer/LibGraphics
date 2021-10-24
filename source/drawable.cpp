@@ -1,4 +1,4 @@
-#include "lib_graphics/drawable.h"
+#include "libgraphics/drawable.h"
 
 namespace LibGraphics
 {

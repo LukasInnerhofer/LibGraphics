@@ -1,7 +1,7 @@
 #include <cassert>
 #include <stdexcept>
 
-#include "lib_graphics/vertex_buffer.h"
+#include "libgraphics/vertex_buffer.h"
 
 namespace LibGraphics
 {

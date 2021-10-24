@@ -3,8 +3,8 @@
 #include <memory>
 #include <queue>
 
-#include "lib_graphics/string.h"
-#include "lib_graphics/window.h"
+#include "libgraphics/string.h"
+#include "libgraphics/window.h"
 #include "opengl.h"
 
 namespace LibGraphics

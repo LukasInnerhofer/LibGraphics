@@ -1,10 +1,8 @@
-#pragma once
-
 #include <climits>
 #include <cuchar>
 #include <memory>
 
-#include "lib_graphics/string.h"
+#include "libgraphics/string.h"
 
 namespace LibGraphics
 {

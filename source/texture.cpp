@@ -1,4 +1,4 @@
-#include "lib_graphics/texture.h"
+#include "libgraphics/texture.h"
 
 namespace LibGraphics
 {

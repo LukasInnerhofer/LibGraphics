@@ -1,4 +1,4 @@
-#include "lib_graphics/drawable_vertex_buffer.h"
+#include "libgraphics/drawable_vertex_buffer.h"
 
 namespace LibGraphics
 {

@@ -1,4 +1,4 @@
-#include "lib_graphics/rectangle.h"
+#include "libgraphics/rectangle.h"
 
 namespace LibGraphics
 {

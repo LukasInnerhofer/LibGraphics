@@ -5,8 +5,8 @@
 #include <queue>
 #include <stdexcept>
 
-#include "lib_graphics/window.h"
-#include "lib_graphics/string.h"
+#include "libgraphics/window.h"
+#include "libgraphics/string.h"
 #include "opengl_drawable.h"
 #include "window_impl.h"
 #include "shader.h"
@@ -50,7 +50,7 @@ public:
         shaderProgram{new ShaderProgram{openGl, vertexShader, fragmentShader}},
         textureShaderProgram{new ShaderProgram{openGl, textureVertexShader, textureFragmentShader}}
     {
-        //openGl->glEnable()(GL_TEXTURE);
+        
     }
 
     std::shared_ptr<std::queue<Window::Event>> events;
