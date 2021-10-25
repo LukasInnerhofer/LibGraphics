@@ -29,31 +29,31 @@ class Window::Impl
 {
 public:
     Impl(String const &title) :
-        events{new std::queue<Window::Event>{}},
+        events{std::make_shared<std::queue<Window::Event>>()},
         osImpl{title, events},
         openGl{osImpl.getOpenGl()},
         vertexShader{
-            new Shader{
+            std::make_shared<Shader>(
                 openGl,
                 LibUtilities::InStream<GLchar>{std::make_shared<std::basic_ifstream<GLchar>>("vertex.glsl")},
-                GL_VERTEX_SHADER}},
+                GL_VERTEX_SHADER)},
         textureVertexShader{
-            new Shader{
+            std::make_shared<Shader>(
                 openGl,
                 LibUtilities::InStream<GLchar>{std::make_shared<std::basic_ifstream<GLchar>>("vertex_texture.glsl")},
-                GL_VERTEX_SHADER}},
+                GL_VERTEX_SHADER)},
         fragmentShader{
-            new Shader{
+            std::make_shared<Shader>(
                 openGl,
                 LibUtilities::InStream<GLchar>{std::make_shared<std::basic_ifstream<GLchar>>("fragment.glsl")},
-                GL_FRAGMENT_SHADER}},
+                GL_FRAGMENT_SHADER)},
         textureFragmentShader{
-            new Shader{
+            std::make_shared<Shader>(
                 openGl,
                 LibUtilities::InStream<GLchar>{std::make_shared<std::basic_ifstream<GLchar>>("fragment_texture.glsl")},
-                GL_FRAGMENT_SHADER}},
-        shaderProgram{new ShaderProgram{openGl, vertexShader, fragmentShader}},
-        textureShaderProgram{new ShaderProgram{openGl, textureVertexShader, textureFragmentShader}}
+                GL_FRAGMENT_SHADER)},
+        shaderProgram{std::make_unique<ShaderProgram>(openGl, vertexShader, fragmentShader)},
+        textureShaderProgram{std::make_unique<ShaderProgram>(openGl, textureVertexShader, textureFragmentShader)}
     {
         
     }
@@ -133,7 +133,8 @@ void Window::draw(VertexBuffer const &vertexBuffer)
 
     if (!m_pImpl->openGlDrawables.contains(&vertexBuffer))
     {
-        m_pImpl->openGlDrawables.insert({&vertexBuffer, new OpenGlDrawable{m_pImpl->openGl, static_cast<bool>(texture)}});
+        //m_pImpl->openGlDrawables.insert({&vertexBuffer, std::make_unique<OpenGlDrawable>(m_pImpl->openGl, static_cast<bool>(texture))});
+        m_pImpl->openGlDrawables.emplace(&vertexBuffer, std::make_unique<OpenGlDrawable>(m_pImpl->openGl, static_cast<bool>(texture)));
         m_pImpl->openGlDrawables.at(&vertexBuffer)->bind();
         if (texture)
         {
