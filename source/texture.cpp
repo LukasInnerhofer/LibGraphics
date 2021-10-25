@@ -31,7 +31,7 @@ bool Texture::setPixel(PositionVector const &position, Color color)
         return false;
     }
 
-    size_t const offset{position.getX() * position.getY() * bytesPerPixel};
+    size_t const offset{(position.getX() + (position.getY() * m_size.getX())) * bytesPerPixel};
     m_data[offset] = color.getR();
     m_data[offset + 1] = color.getG();
     m_data[offset + 2] = color.getB();
